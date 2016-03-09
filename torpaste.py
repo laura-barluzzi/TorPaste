@@ -47,7 +47,7 @@ def viewpaste(pasteid):
 	PasteDate = open(PastePath + ".date", "r").read()
 	PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
 	PasteSize = formatSize(len(PasteContent))
-	return render_template("view.html", content=PasteContent, date=PasteDate, size=PasteSize, pid=pasteid)
+	return render_template("view.html", content=PasteContent, date=PasteDate, size=PasteSize, pid=pasteid, title=WEBSITE_TITLE)
 
 @app.route("/raw/<pasteid>")
 def rawpaste(pasteid):
@@ -67,11 +67,13 @@ def rawpaste(pasteid):
 def list():
 	PasteList = []
 	for a in os.listdir("pastes"):
+		if(a.find(".") != -1):
+			continue
 		for b in os.listdir("pastes/" + a):
 			for paste in os.listdir("pastes/" + a + "/" + b):
 				if(paste.find(".") == -1):
 					PasteList.append(paste)
-	return render_template("list.html", pastes=PasteList)
+	return render_template("list.html", pastes=PasteList, title=WEBSITE_TITLE)
 
 # Functions
 def formatSize(size):

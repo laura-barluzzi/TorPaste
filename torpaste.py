@@ -66,6 +66,8 @@ def rawpaste(pasteid):
 @app.route("/list")
 def list():
 	PasteList = []
+	if(len(os.listdir("pastes")) < 2):
+		return render_template("list.html", pastes=['none'], title=WEBSITE_TITLE)
 	for a in os.listdir("pastes"):
 		if(a.find(".") != -1):
 			continue

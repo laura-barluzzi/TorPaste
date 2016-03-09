@@ -43,3 +43,11 @@ or from Docker Hub:
 ```bash
 docker run -d -p 80:5000 daknob/torpaste
 ```
+
+If you're using Docker and you need the pastes to persist, you can mount the paste
+directory to the local filesystem. This will store all pastes in the host and not
+inside the container. This can be done as such:
+
+```bash
+docker run -d -p 80:5000 -v /path/to/host/:/code/pastes daknob/torpaste
+```

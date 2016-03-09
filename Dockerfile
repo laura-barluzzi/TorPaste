@@ -16,5 +16,8 @@ WORKDIR /code
 # Expose port 5000
 EXPOSE 5000
 
+# Make paste folder mountable
+VOLUME ["/code/pastes"]
+
 # Run Flask App
 CMD ["/usr/bin/python2", "/code/torpaste.py"]

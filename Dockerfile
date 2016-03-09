@@ -11,6 +11,7 @@ RUN pip install Flask
 
 # Install Code
 COPY . /code
+WORKDIR /code
 
 # Expose port 5000
 EXPOSE 5000

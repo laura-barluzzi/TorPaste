@@ -88,4 +88,4 @@ def formatSize(size):
 	return str(round(size,1)) + " " + scales[count]
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")

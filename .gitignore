@@ -1,6 +1,7 @@
 *.swp
 *.DS_Store
 *.Python
+pastes/*
 pip-selfcheck.json
 bin
 include

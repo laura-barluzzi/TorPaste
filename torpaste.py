@@ -31,7 +31,12 @@ def newpaste():
 			open(PASTEPATH + ".date", "w+").write(str(int(time.time())))
 			return redirect("/view/" + PasteID)
 		else:
-			return "<h1>Bad Request</h1>", 400
+			return render_template(
+				"index.html",
+				title=WEBSITE_TITLE,
+				version=VERSION,
+				error = "Please enter some text to include in the paste."
+			)
 
 @app.route("/view/<pasteid>")
 def viewpaste(pasteid):

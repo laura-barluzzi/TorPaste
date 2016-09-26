@@ -7,6 +7,14 @@
 
 		{% include "navbar.html" %}
 
+		{% if error %}
+		<div class="col-xs-12 col-md-10 col-md-offset-1">
+			<div class="alert alert-danger" role="alert">
+				{{ error }}
+			</div>
+		</div>
+		{% endif %}
+
 		<div class="row">
 			<div class="col-xs-10 col-xs-offset-1">
 				<div class="jumbotron">

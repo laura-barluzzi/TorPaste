@@ -19,7 +19,7 @@ publicly to anyone to see as well. Do not use this service for sensitive data.
 You can run this locally in your system:
 
 ```bash
-sudo pip install Flask
+sudo pip install -r requirements.txt
 python torpaste.py
 ```
 
@@ -27,7 +27,7 @@ or using `virtualenv`:
 
 ```bash
 virtualenv .
-bin/pip install Flask
+bin/pip install -r requirements.txt
 ./torpaste.py
 ```
 
@@ -35,13 +35,13 @@ You can also run this using Docker:
 
 ```bash
 docker build .
-docker run -d -p 80:5000 <ImageID>
+docker run -d -p 80:80 <ImageID>
 ```
 
 or from Docker Hub:
 
 ```bash
-docker run -d -p 80:5000 daknob/torpaste
+docker run -d -p 80:80 daknob/torpaste
 ```
 
 If you're using Docker and you need the pastes to persist, you can mount the paste
@@ -49,5 +49,5 @@ directory to the local filesystem. This will store all pastes in the host and no
 inside the container. This can be done as such:
 
 ```bash
-docker run -d -p 80:5000 -v /path/to/host/:/code/pastes daknob/torpaste
+docker run -d -p 80:80 -v /path/to/host/:/torpaste/pastes daknob/torpaste
 ```

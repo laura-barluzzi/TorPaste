@@ -7,15 +7,16 @@ import os, time
 app = Flask(__name__)
 
 WEBSITE_TITLE = "Tor Paste"
+VERSION = "0.2"
 
 @app.route('/')
 def index():
-    return render_template("index.html", title=WEBSITE_TITLE)
+    return render_template("index.html", title=WEBSITE_TITLE, version=VERSION)
 
 @app.route("/new", methods=["GET", "POST"])
 def newpaste():
 	if(request.method == "GET"):
-		return render_template("index.html", title=WEBSITE_TITLE)
+		return render_template("index.html", title=WEBSITE_TITLE, version=VERSION)
 	else:
 		if(request.form['content']):
 			PasteID = str(sha256(request.form['content']).hexdigest())
@@ -47,7 +48,7 @@ def viewpaste(pasteid):
 	PasteDate = open(PastePath + ".date", "r").read()
 	PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
 	PasteSize = formatSize(len(PasteContent))
-	return render_template("view.html", content=PasteContent, date=PasteDate, size=PasteSize, pid=pasteid, title=WEBSITE_TITLE)
+	return render_template("view.html", content=PasteContent, date=PasteDate, size=PasteSize, pid=pasteid, title=WEBSITE_TITLE, version=VERSION)
 
 @app.route("/raw/<pasteid>")
 def rawpaste(pasteid):
@@ -67,7 +68,7 @@ def rawpaste(pasteid):
 def list():
 	PasteList = []
 	if(len(os.listdir("pastes")) < 2):
-		return render_template("list.html", pastes=['none'], title=WEBSITE_TITLE)
+		return render_template("list.html", pastes=['none'], title=WEBSITE_TITLE, version=VERSION)
 	for a in os.listdir("pastes"):
 		if(a.find(".") != -1):
 			continue
@@ -75,7 +76,7 @@ def list():
 			for paste in os.listdir("pastes/" + a + "/" + b):
 				if(paste.find(".") == -1):
 					PasteList.append(paste)
-	return render_template("list.html", pastes=PasteList, title=WEBSITE_TITLE)
+	return render_template("list.html", pastes=PasteList, title=WEBSITE_TITLE, version=VERSION)
 
 # Functions
 def formatSize(size):

@@ -31,11 +31,14 @@ def newpaste():
 			open(PASTEPATH + ".date", "w+").write(str(int(time.time())))
 			return redirect("/view/" + PasteID)
 		else:
-			return render_template(
-				"index.html",
-				title=WEBSITE_TITLE,
-				version=VERSION,
-				error = "Please enter some text to include in the paste."
+			return Response(
+				render_template(
+					"index.html",
+					title=WEBSITE_TITLE,
+					version=VERSION,
+					error = "Please enter some text to include in the paste."
+				),
+				400
 			)
 
 @app.route("/view/<pasteid>")

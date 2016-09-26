@@ -34,8 +34,8 @@ bin/pip install -r requirements.txt
 You can also run this using Docker:
 
 ```bash
-docker build .
-docker run -d -p 80:80 <ImageID>
+docker build -t daknob/torpaste .
+docker run -d -p 80:80 daknob/torpaste
 ```
 
 or from Docker Hub:

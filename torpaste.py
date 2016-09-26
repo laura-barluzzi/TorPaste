@@ -13,8 +13,8 @@ VERSION = "0.3"
 def index():
     return render_template(
 		"index.html",
-		title=WEBSITE_TITLE,
-		version=VERSION
+		title = WEBSITE_TITLE,
+		version = VERSION
 	)
 
 @app.route("/new", methods=["GET", "POST"])
@@ -22,8 +22,8 @@ def newpaste():
 	if(request.method == "GET"):
 		return render_template(
 			"index.html",
-			title=WEBSITE_TITLE,
-			version=VERSION
+			title = WEBSITE_TITLE,
+			version = VERSION
 		)
 	else:
 		if(request.form['content']):
@@ -42,8 +42,8 @@ def newpaste():
 			return Response(
 				render_template(
 					"index.html",
-					title=WEBSITE_TITLE,
-					version=VERSION,
+					title = WEBSITE_TITLE,
+					version = VERSION,
 					error = "Please enter some text to include in the paste."
 				),
 				400
@@ -55,8 +55,8 @@ def viewpaste(pasteid):
 		return Response(
 			render_template(
 				"index.html",
-				title=WEBSITE_TITLE,
-				version=VERSION,
+				title = WEBSITE_TITLE,
+				version = VERSION,
 				error = "Invalid Paste ID. Please check the link you used or use Pastes button above."
 			),
 			400
@@ -65,8 +65,8 @@ def viewpaste(pasteid):
 		return Response(
 			render_template(
 				"index.html",
-				title=WEBSITE_TITLE,
-				version=VERSION,
+				title = WEBSITE_TITLE,
+				version = VERSION,
 				error = "Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link you clicked is correct or use the Pastes button above."
 			),
 			400
@@ -78,8 +78,8 @@ def viewpaste(pasteid):
 		return Response(
 			render_template(
 				"index.html",
-				title=WEBSITE_TITLE,
-				version=VERSION,
+				title = WEBSITE_TITLE,
+				version = VERSION,
 				error = "A paste with this ID could not be found. Sorry."
 			),
 			404
@@ -90,12 +90,12 @@ def viewpaste(pasteid):
 	PasteSize = formatSize(len(PasteContent))
 	return render_template(
 		"view.html",
-		content=PasteContent,
-		date=PasteDate,
-		size=PasteSize,
-		pid=pasteid,
-		title=WEBSITE_TITLE,
-		version=VERSION
+		content = PasteContent,
+		date = PasteDate,
+		size = PasteSize,
+		pid = pasteid,
+		title = WEBSITE_TITLE,
+		version = VERSION
 	)
 
 @app.route("/raw/<pasteid>")
@@ -112,7 +112,7 @@ def rawpaste(pasteid):
 	PasteContent = open(PastePath, "r").read()
 	return Response(
 		PasteContent,
-		mimetype="text/plain"
+		mimetype = "text/plain"
 	)
 
 @app.route("/list")
@@ -121,9 +121,9 @@ def list():
 	if(len(os.listdir("pastes")) < 2):
 		return render_template(
 			"list.html",
-			pastes=['none'],
-			title=WEBSITE_TITLE,
-			version=VERSION
+			pastes = ['none'],
+			title = WEBSITE_TITLE,
+			version = VERSION
 		)
 	for a in os.listdir("pastes"):
 		if(a.find(".") != -1):
@@ -134,9 +134,9 @@ def list():
 					PasteList.append(paste)
 	return render_template(
 		"list.html",
-		pastes=PasteList,
-		title=WEBSITE_TITLE,
-		version=VERSION
+		pastes = PasteList,
+		title = WEBSITE_TITLE,
+		version = VERSION
 	)
 
 # Functions

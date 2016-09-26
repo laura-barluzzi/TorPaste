@@ -7,7 +7,7 @@ import os, time
 app = Flask(__name__)
 
 WEBSITE_TITLE = "Tor Paste"
-VERSION = "0.2"
+VERSION = "0.3"
 
 @app.route('/')
 def index():

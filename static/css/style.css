@@ -1,10 +1,15 @@
+/* Set Website background color */
 body{
 	background-color:#fefefe;
 }
+
+/* Code Needed for Tor Logo */
 .torlogo{
 	height:200%;
 	margin-top:-10px;
 }
+
+/* Use a monospace font for ASCII Art */
 textarea{
 	font-family: monospace;
 }

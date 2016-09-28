@@ -5,14 +5,15 @@ A Pastebin for Tor
 
 TorPaste is a simple Pastebin service written in Python using the Flask framework.
 It is targetted to users inside Tor and can be easily setup as a Hidden Service.
-All files are stored in the filesystem of the server, in the `pastes` folder. It has
-been designed in order to need no cookies or JavaScript and can work without problems
-in Tor Browser with Security and Privacy Settings set to Maximum, unlike most, if not
-all, other services.
+As of version v0.4 TorPaste supports multiple backends for storage of data, however
+currently only the local filesystem backend is implemented. TorPaste has been designed
+in order to need no cookies or JavaScript and to run without problems in the Tor Browser
+with the Security and Privacy Settings set to Maximum.
 
-Unfortunately that means all the pastes are stored in **plaintext** format, readable
-by anyone, including the server. For this reason, all pastes are indexed and available
-publicly to anyone to see as well. Do not use this service for sensitive data.
+Unfortunately, the lack of client-side code means all the pastes are stored in
+**plaintext** format, readable by anyone, including the server. For this reason,
+all pastes are indexed and available publicly by default to anyone to see as well.
+Do not use this service for sensitive data.
 
 ## How to run this?
 
@@ -51,3 +52,21 @@ inside the container. This can be done as such:
 ```bash
 docker run -d -p 80:80 -v /path/to/host/:/torpaste/pastes daknob/torpaste
 ```
+
+## Backends
+TorPaste is extensible and supports multiple backends for storage of its data. As
+of now, the only one implemented is the `filesystem` backend, which stores all data
+as files in the local filesystem. If you're interested in writting a backend, please
+see [Issue #15](https://github.com/DaKnOb/TorPaste/issues/15) for some ideas. For
+more information in the development of new backends, there's an `example.py` file
+inside the `backends` folder which you can copy and start editing right away. The
+file includes a lot of useful information and design documentation for your new
+backend, but if you still want to look at an example, the `backends/filesystem.py`
+is there as well to have a look.
+
+### filesystem
+This is the first backend available for TorPaste and stores everything in the local
+filesystem. TorPaste versions prior to v0.4 had this backend hardcoded and therefore
+this is an improved implementation so we can maintain backwards compatibility without
+running any migration scripts. It is also the simplest backend and it is used by
+default.

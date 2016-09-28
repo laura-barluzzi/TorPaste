@@ -157,6 +157,15 @@ def list():
 		page = "list"
 	)
 
+@app.route("/about")
+def aboutTorPaste():
+	return render_template(
+		"about.html",
+		title = WEBSITE_TITLE,
+		version = VERSION,
+		page = "about"
+	)
+
 # Functions
 def formatSize(size):
 	scales = ["bytes", "kB", "MB", "GB", "TB", "EB"]

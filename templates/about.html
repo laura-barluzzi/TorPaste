@@ -1,0 +1,72 @@
+<html>
+	<head>
+		{% include "head.html" %}
+	</head>
+
+	<body>
+
+		{% include "navbar.html" %}
+
+		<div class="col-xs-12 col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1">
+						<h2>TorPaste</h2>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-10 col-xs-offset-1">
+						<p>
+							TorPaste is an Open Source Pastebin alternative whose code
+							is available on
+							<a href="https://github.com/DaKnOb/TorPaste">GitHub</a>. It
+							has been created by
+							<a href="https://daknob.net/">Antonios A. Chariton</a> and
+							other GitHub
+							<a href="https://github.com/DaKnOb/TorPaste/graphs/contributors">
+							Contributors</a> and it
+							is written in Python, using the
+							<a href="http://flask.pocoo.org/">Flask Microframework</a>.
+							It aims to be simple and elegant and is designed with security
+							in mind. Moreover, the developers are trying to make it as
+							easy as possible to set up in a HA environment.
+						</p>
+						<p>
+							TorPaste got its name from the
+							<a href="https://www.torproject.org/">Tor Project</a> because
+							it is designed to work as a Hidden Service within the network.
+							As a matter of fact, TorPaste was <em>created</em> because no
+							good alternatives existed. Of course, that doesn't mean that
+							it can't work in a local area network or over the Internet,
+							however it has been designed to work in the Tor Browser with
+							Security Settings set to Maximum. So, sorry: No JavaScript for
+							you!
+						</p>
+						<p>
+							However, that lack of JavaScript means that all code is run
+							server-side, therefore it is not possible to store all pastes
+							encrypted client-side. For this reason, all pastes are stored
+							in plaintext in the server and the operator of the server can
+							read 100% of them. TorPaste users should encrypt the data
+							themselves before posting it, with a proper system such as
+							PGP / GPG.
+						</p>
+						<p>
+							Some of the options of TorPaste that can be enabled or
+							disabled by the System Administrator are the ability to
+							have a public list of all pastes, the ability to mark some
+							pastes as private, as well as an API. For more information
+							on TorPaste, please open the project on
+							<a href="https://github.com/DaKnOb/TorPaste">GitHub</a>. Of
+							course, Pull Requests are always welcome and we're looking
+							forward to them.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{% include "footer.html" %}
+
+	</body>
+</html>

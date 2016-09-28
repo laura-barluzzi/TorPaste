@@ -128,7 +128,7 @@ def viewpaste(pasteid):
 		)
 
 	try:
-		PasteDate = b.getPasteMetadata(pasteid)['date']
+		PasteDate = b.getPasteMetadataValue(pasteid, "date")
 	except b.e.ErrorException as errmsg:
 		return render_template(
 			"index.html",

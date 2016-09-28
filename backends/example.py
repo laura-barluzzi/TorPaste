@@ -111,6 +111,18 @@ def getPasteContents(pasteid):
 def getPasteMetadata(pasteid):
 	return {"Key": "Value"}
 
+# getPasteMetadataValue(pasteid, key):
+## This method must return the value of the metadata key provided for
+## the paste whose Paste ID is provided. If the key is not set, the
+## method should return None. You can assume that a paste with this
+## Paste ID exists, and you can also assume that both parameters
+## passed are typically ASCII.
+def getPasteMetadataValue(pasteid, key):
+	if ( getPasteMetadata(pasteid)[key] ):
+		return getPasteMetadata(pasteid)[key]
+	else:
+		return None
+
 # getAllPasteIDs()
 ## This method must return a Python list containing each and every
 ## Paste ID, in ASCII. The order does not matter so it can be the same

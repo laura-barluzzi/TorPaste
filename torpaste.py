@@ -8,7 +8,7 @@ import backends.filesystem as b
 app = Flask(__name__)
 
 WEBSITE_TITLE = "Tor Paste"
-VERSION = "0.3"
+VERSION = "0.4"
 
 @app.route('/')
 def index():

@@ -14,7 +14,8 @@ def index():
     return render_template(
 		"index.html",
 		title = WEBSITE_TITLE,
-		version = VERSION
+		version = VERSION,
+        page = "main"
 	)
 
 @app.route("/new", methods=["GET", "POST"])
@@ -23,7 +24,8 @@ def newpaste():
 		return render_template(
 			"index.html",
 			title = WEBSITE_TITLE,
-			version = VERSION
+			version = VERSION,
+            page = "new"
 		)
 	else:
 		if(request.form['content']):
@@ -44,7 +46,8 @@ def newpaste():
 					"index.html",
 					title = WEBSITE_TITLE,
 					version = VERSION,
-					error = "Please enter some text to include in the paste."
+					error = "Please enter some text to include in the paste.",
+                    page = "new"
 				),
 				400
 			)
@@ -57,7 +60,8 @@ def viewpaste(pasteid):
 				"index.html",
 				title = WEBSITE_TITLE,
 				version = VERSION,
-				error = "Invalid Paste ID. Please check the link you used or use Pastes button above."
+				error = "Invalid Paste ID. Please check the link you used or use Pastes button above.",
+                page = "new"
 			),
 			400
 		)
@@ -67,7 +71,8 @@ def viewpaste(pasteid):
 				"index.html",
 				title = WEBSITE_TITLE,
 				version = VERSION,
-				error = "Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link you clicked is correct or use the Pastes button above."
+				error = "Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link you clicked is correct or use the Pastes button above.",
+                page = "new"
 			),
 			400
 		)
@@ -80,7 +85,8 @@ def viewpaste(pasteid):
 				"index.html",
 				title = WEBSITE_TITLE,
 				version = VERSION,
-				error = "A paste with this ID could not be found. Sorry."
+				error = "A paste with this ID could not be found. Sorry.",
+                page = "new"
 			),
 			404
 		)
@@ -95,7 +101,8 @@ def viewpaste(pasteid):
 		size = PasteSize,
 		pid = pasteid,
 		title = WEBSITE_TITLE,
-		version = VERSION
+		version = VERSION,
+        page = "view"
 	)
 
 @app.route("/raw/<pasteid>")
@@ -123,7 +130,8 @@ def list():
 			"list.html",
 			pastes = ['none'],
 			title = WEBSITE_TITLE,
-			version = VERSION
+			version = VERSION,
+            page = "list"
 		)
 	for a in os.listdir("pastes"):
 		if(a.find(".") != -1):
@@ -136,7 +144,8 @@ def list():
 		"list.html",
 		pastes = PasteList,
 		title = WEBSITE_TITLE,
-		version = VERSION
+		version = VERSION,
+        page = "list"
 	)
 
 # Functions

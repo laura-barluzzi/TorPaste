@@ -15,10 +15,12 @@
     			</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li><a href="/list">Pastes</a></li>
+						<li class="{% if page == 'list' %}active{% endif %}">
+							<a href="/list">Pastes</a>
+						</li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li>
+						<li class="{% if page == 'new' %}active{% endif %}">
 							<a href="/new">
 								[+] New Paste
 							</a>

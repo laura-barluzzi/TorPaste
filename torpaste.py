@@ -4,6 +4,7 @@ from flask import *
 from hashlib import sha256
 from datetime import datetime
 import os, time
+import backends.filesystem as b
 app = Flask(__name__)
 
 WEBSITE_TITLE = "Tor Paste"
@@ -39,15 +40,33 @@ def newpaste():
 					page = "new",
 					error = "The current version of TorPaste supports ASCII characters only. UTF-8 support is coming soon."
 				)
-			A = PasteID[0:2]
-			B = PasteID[2:4]
 			try:
-				os.makedirs("pastes/" + A + "/" + B)
-			except:
-				pass
-			PASTEPATH = "pastes/" + A + "/" + B + "/" + PasteID
-			open(PASTEPATH, "w+").write(request.form['content'])
-			open(PASTEPATH + ".date", "w+").write(str(int(time.time())))
+				b.newPaste(PasteID, request.form['content'])
+			except b.e.ErrorException as errmsg:
+				return render_template(
+					"index.html",
+					title = WEBSITE_TITLE,
+					version = VERSION,
+					page = "new",
+					error = errmsg
+				)
+
+			try:
+				b.updatePasteMetadata(
+					PasteID,
+					{
+						"date": unicode(int(time.time()))
+					}
+				)
+			except b.e.ErrorException as errmsg:
+				return render_template(
+					"index.html",
+					title = WEBSITE_TITLE,
+					version = VERSION,
+					page = "new",
+					error = errmsg
+				)
+
 			return redirect("/view/" + PasteID)
 		else:
 			return Response(
@@ -85,10 +104,7 @@ def viewpaste(pasteid):
 			),
 			400
 		)
-	A = pasteid[0:2]
-	B = pasteid[2:4]
-	PastePath = "pastes/" + A + "/" + B + "/" + pasteid
-	if(not os.path.isfile(PastePath)):
+	if ( not b.doesPasteExist(pasteid) ):
 		return Response(
 			render_template(
 				"index.html",
@@ -99,8 +115,37 @@ def viewpaste(pasteid):
 			),
 			404
 		)
-	PasteContent = open(PastePath, "r").read()
-	PasteDate = open(PastePath + ".date", "r").read()
+
+	try:
+		PasteContent = b.getPasteContents(pasteid)
+	except b.e.ErrorException as errmsg:
+		return render_template(
+			"index.html",
+			title = WEBSITE_TITLE,
+			version = VERSION,
+			error = errmsg,
+			page = "new"
+		)
+
+	try:
+		PasteDate = b.getPasteMetadata(pasteid)['date']
+	except b.e.ErrorException as errmsg:
+		return render_template(
+			"index.html",
+			title = WEBSITE_TITLE,
+			version = VERSION,
+			error = errmsg,
+			page = "new"
+		)
+	except b.e.WarningException as errmsg:
+		return render_template(
+			"index.html",
+			title = WEBSITE_TITLE,
+			version = VERSION,
+			warning = errmsg,
+			page = "new"
+		)
+
 	PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
 	PasteSize = formatSize(len(PasteContent))
 	return render_template(
@@ -120,12 +165,15 @@ def rawpaste(pasteid):
 		return "No such paste", 404
 	if(len(pasteid) < 6):
 		return "No such paste", 404
-	A = pasteid[0:2]
-	B = pasteid[2:4]
-	PastePath = "pastes/" + A + "/" + B + "/" + pasteid
-	if(not os.path.isfile(PastePath)):
+	if ( not b.doesPasteExist(pasteid) ):
 		return "No such paste", 404
-	PasteContent = open(PastePath, "r").read()
+	try:
+		PasteContent = b.getPasteContents(pasteid)
+	except b.e.ErrorException as errmsg:
+		return Response(
+			errmsg,
+			500
+		)
 	return Response(
 		PasteContent,
 		mimetype = "text/plain"
@@ -133,8 +181,18 @@ def rawpaste(pasteid):
 
 @app.route("/list")
 def list():
-	PasteList = []
-	if(len(os.listdir("pastes")) < 2):
+	try:
+		PasteList = b.getAllPasteIDs()
+	except b.e.ErrorException as errmsg:
+		return render_template(
+			"index.html",
+			title = WEBSITE_TITLE,
+			version = VERSION,
+			page = "new",
+			error = errmsg
+		)
+
+	if ( PasteList[0] == 'none' ):
 		return render_template(
 			"list.html",
 			pastes = ['none'],
@@ -142,13 +200,6 @@ def list():
 			version = VERSION,
 			page = "list"
 		)
-	for a in os.listdir("pastes"):
-		if(a.find(".") != -1):
-			continue
-		for b in os.listdir("pastes/" + a):
-			for paste in os.listdir("pastes/" + a + "/" + b):
-				if(paste.find(".") == -1):
-					PasteList.append(paste)
 	return render_template(
 		"list.html",
 		pastes = PasteList,
@@ -177,6 +228,13 @@ def formatSize(size):
 		else:
 			break
 	return str(round(size,1)) + " " + scales[count]
+
+# Required Initialization Code
+try:
+	b.initializeBackend()
+except:
+	print("Failed to initialize backend")
+	exit(1)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

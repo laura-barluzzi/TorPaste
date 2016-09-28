@@ -1,0 +1,14 @@
+{% if error %}
+<div class="col-xs-12 col-md-10 col-md-offset-1">
+	<div class="alert alert-danger" role="alert">
+		<p>{{ error }}</p>
+	</div>
+</div>
+{% endif %}
+{% if warning %}
+<div class="col-xs-12 col-md-10 col-md-offset-1">
+	<div class="alert alert-warning" role="alert">
+		<p>{{ warning }}</p>
+	</div>
+</div>
+{% endif %}

@@ -29,7 +29,16 @@ def newpaste():
 		)
 	else:
 		if(request.form['content']):
-			PasteID = str(sha256(request.form['content']).hexdigest())
+			try:
+				PasteID = str(sha256(request.form['content']).hexdigest())
+			except:
+				return render_template(
+					"index.html",
+					title = WEBSITE_TITLE,
+					version = VERSION,
+					page = "new",
+					error = "The current version of TorPaste supports ASCII characters only. UTF-8 support is coming soon."
+				)
 			A = PasteID[0:2]
 			B = PasteID[2:4]
 			try:

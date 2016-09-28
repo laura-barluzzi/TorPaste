@@ -45,6 +45,28 @@ or from Docker Hub:
 docker run -d -p 80:80 daknob/torpaste
 ```
 
+If you want to run TorPaste in production
+( [don't worry, you're not alone](https://paste.daknob.net) ), consider using
+a specific tag such as `daknob/torpaste:v0.3`. The `latest` tag is synchronized
+automatically with the `master` branch of this repo and therefore is the bleeding
+edge version. In both cases, don't forget to update your version of TorPaste for
+bug fixes, security patches, and new features. This can be done by running:
+
+```bash
+docker pull daknob/torpaste
+```
+
+or of course, for a specific version:
+
+```bash
+
+docker pull daknob/torpaste:v0.3
+```
+
+and then stop the previous container and start a new one. It is important to use
+the same settings when launching a new container, so any `-p` / `-e` / `-v` arguments
+need to be specified again.
+
 If you're using Docker and you need the pastes to persist, you can mount the paste
 directory to the local filesystem. This will store all pastes in the host and not
 inside the container. This can be done as such:

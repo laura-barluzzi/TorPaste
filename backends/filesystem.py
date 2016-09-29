@@ -2,6 +2,7 @@
 
 import exceptions as e
 import os
+import codecs
 
 # initializeBackend()
 ## This method is called when the Flask application starts. Here you can do
@@ -35,7 +36,7 @@ def newPaste(pasteid, pastecontent):
 	ppath = "pastes/" + a + "/" + b + "/" + pasteid
 
 	try:
-		with open(ppath, "w+") as fd:
+		with codecs.open(ppath, encoding="utf-8", mode="w+") as fd:
 			fd.write(pastecontent)
 	except:
 		raise e.ErrorException("An issue occured with the local filesystem. Please try again later. If the problem perists, try notifying a system administrator.")
@@ -93,7 +94,7 @@ def getPasteContents(pasteid):
 	b = pasteid[2:4]
 
 	try:
-		with open("pastes/" + a + "/" + b + "/" + pasteid) as fd:
+		with codecs.open("pastes/" + a + "/" + b + "/" + pasteid, encoding="utf-8") as fd:
 			return fd.read()
 	except:
 		raise e.ErrorException("An issue occured with the local filesystem. Please try again later. If the problem persists, try notifying a system administrator.")

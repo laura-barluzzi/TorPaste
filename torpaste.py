@@ -4,6 +4,7 @@ from flask import *
 from hashlib import sha256
 from datetime import datetime
 import os, time
+import codecs
 import backends.filesystem as b
 app = Flask(__name__)
 
@@ -31,7 +32,7 @@ def newpaste():
 	else:
 		if(request.form['content']):
 			try:
-				PasteID = str(sha256(request.form['content']).hexdigest())
+				PasteID = str(sha256(request.form['content'].encode('utf-8')).hexdigest())
 			except:
 				return render_template(
 					"index.html",

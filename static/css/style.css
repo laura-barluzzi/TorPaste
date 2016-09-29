@@ -20,3 +20,9 @@ span.hamburger {
 	font-weight: lighter;
 	color: #fefefe;
 }
+
+@media screen and (max-width: 767px) {
+    #new-paste-button {
+    	width: 100%;
+    }
+}

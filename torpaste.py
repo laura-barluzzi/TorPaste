@@ -39,7 +39,7 @@ def newpaste():
 					title = WEBSITE_TITLE,
 					version = VERSION,
 					page = "new",
-					error = "The current version of TorPaste supports ASCII characters only. UTF-8 support is coming soon."
+					error = "An issue occured while handling the paste. Please try again later. If the problem persists, try notifying a system administrator."
 				)
 			try:
 				b.newPaste(PasteID, request.form['content'])

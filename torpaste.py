@@ -1,4 +1,5 @@
 #!bin/python
+# -*- coding: utf-8 -*-
 
 from flask import *
 from hashlib import sha256

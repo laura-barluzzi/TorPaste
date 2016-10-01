@@ -17,9 +17,6 @@ WORKDIR /torpaste
 # Install the required software
 RUN pip install -r requirements.txt
 
-# Hack to use UTF-8 instead of ASCII
-RUN echo "import sys; sys.setdefaultencoding('utf-8')" > /usr/lib/python2.7/site-packages/sitecustomize.py
-
 # Expose port *80*
 EXPOSE 80
 

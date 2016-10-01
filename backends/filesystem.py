@@ -72,7 +72,7 @@ def updatePasteMetadata(pasteid, metadata):
 
 	try:
 		for k, v in metadata.iteritems():
-			with open(ppath + "." + k, "w+") as fd:
+			with codecs.open(ppath + "." + k, "w+") as fd:
 				fd.write(v)
 	except:
 		raise e.ErrorException("An issue occured with the local filesystem. Please try again later. If the problem persists, try notifying a system administrator.")
@@ -122,7 +122,7 @@ def getPasteMetadata(pasteid):
 		for f in os.listdir("pastes/" + a + "/" + b + "/"):
 			if (pasteid in f) and ("." in f):
 				t = f.split(".")[1]	
-				with open("pastes/" + a + "/" + b + "/" + f, "r") as fd:
+				with codecs.open("pastes/" + a + "/" + b + "/" + f, "r") as fd:
 					ret[t] = fd.read()
 	except:
 		raise e.ErrorException("An issue occured with the local filesystem. Please try again later. If the problem persists, try notifying a system administrator.")

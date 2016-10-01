@@ -1,6 +1,5 @@
 #!../bin/python
 # -*- coding: utf-8 -*-
-✓1
 
 import exceptions as e
 import os

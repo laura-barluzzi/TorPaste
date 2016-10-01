@@ -4,7 +4,6 @@ from flask import *
 from hashlib import sha256
 from datetime import datetime
 import os, time
-import codecs
 import backends.filesystem as b
 app = Flask(__name__)
 

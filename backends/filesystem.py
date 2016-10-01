@@ -64,6 +64,13 @@ def updatePasteMetadata(pasteid, metadata):
 	ppath = "pastes/" + a + "/" + b + "/" + pasteid
 
 	try:
+		for j in os.listdir("pastes/" + a + "/" + b):
+			if ("." in j) and (pasteid in j):
+				os.remove("pastes/" + a + "/" + b + "/" + j)
+	except:
+		raise e.ErrorException("An issue occured with the local filesystem. Please try again later. If the problem persists, try notifying a system administrator.")
+
+	try:
 		for k, v in metadata.iteritems():
 			with open(ppath + "." + k, "w+") as fd:
 				fd.write(v)

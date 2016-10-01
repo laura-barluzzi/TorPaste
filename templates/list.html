@@ -21,7 +21,7 @@
 							<a href="/new" class="list-group-item">No pastes yet</a>
 							{% else %}
 							{% for paste in pastes %}
-							<a href="/view/{{paste}}" class="list-group-item">{{paste}}</a>
+							<a href="/view/{{paste}}" class="list-group-item pastes">{{paste}}</a>
 							{% endfor %}
 							{% endif %}
 						</div>

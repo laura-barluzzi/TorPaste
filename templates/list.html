@@ -16,12 +16,12 @@
 				</div>
 				<div class="row">
 					<div class="col-xs-10 col-xs-offset-1">
-						<div class="list-group">
+						<div class="list-group pastes">
 							{% if "none" in pastes %}
 							<a href="/new" class="list-group-item">No pastes yet</a>
 							{% else %}
 							{% for paste in pastes %}
-							<a href="/view/{{paste}}" class="list-group-item pastes">{{paste}}</a>
+							<a href="/view/{{paste}}" class="list-group-item">{{paste}}</a>
 							{% endfor %}
 							{% endif %}
 						</div>

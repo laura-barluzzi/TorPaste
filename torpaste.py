@@ -147,7 +147,7 @@ def viewpaste(pasteid):
 		)
 
 	PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
-	PasteSize = formatSize(len(PasteContent))
+	PasteSize = formatSize(len(PasteContent.encode('utf-8')))
 	return render_template(
 		"view.html",
 		content = PasteContent,

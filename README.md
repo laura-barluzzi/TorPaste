@@ -92,3 +92,27 @@ filesystem. TorPaste versions prior to v0.4 had this backend hardcoded and there
 this is an improved implementation so we can maintain backwards compatibility without
 running any migration scripts. It is also the simplest backend and it is used by
 default.
+
+## Configuration
+TorPaste can be configured by using `ENV`ironment Variables. The list of available
+variables as well as their actions is below so you can use them to parameterize your
+installation of the software. Please note that all these variables have a default
+value which may not work well for you, but makes them all optional.
+
+### Available ENV Variables
+
+* `TP_WEBSITE_TITLE` : Use this variable to set the TorPaste Title inside the HTML
+`<title></title>` tags. *Default:* `Tor Paste`
+* `TP_BACKEND` : Use this variable to select a backend for TorPaste to use. The
+available backends for each version are included in the `COMPATIBLE_BACKENDS` variable
+inside `torpaste.py`. *Default:* `filesystem`
+
+### Backend ENV Variables
+Each backend may need one or more additional `ENV` variables to work. For example,
+a MySQL backend may need the `HOST`, `PORT`, `USERNAME`, and `PASSWORD` to connect
+to the database. To prevent conflicts, all these variables will be available as
+`TP_BACKEND_BACKENDNAME_VARIABLE` where `BACKENDNAME` is the name of the backend,
+such as `MYSQL` and the `VARIABLE` will be the name of the variable, such as `HOST`.
+
+Currently there are no used backend `ENV` variables. When there are, you will find
+a list of all backends and their variables here.

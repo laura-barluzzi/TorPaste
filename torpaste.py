@@ -5,10 +5,10 @@ from flask import *
 from hashlib import sha256
 from datetime import datetime
 import os, time
+from os import getenv
 import backends.filesystem as b
 app = Flask(__name__)
 
-WEBSITE_TITLE = "Tor Paste"
 VERSION = "0.5"
 
 @app.route('/')
@@ -231,6 +231,15 @@ def formatSize(size):
 	return str(round(size,1)) + " " + scales[count]
 
 # Required Initialization Code
+## Handle Environment Variables (for configuration)
+### Web App <title>
+WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE")
+try:
+	WEBSITE_TITLE += ""
+except:
+	WEBSITE_TITLE  = "Tor Paste"
+
+## Initialize Backend
 try:
 	b.initializeBackend()
 except:

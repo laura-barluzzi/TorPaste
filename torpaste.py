@@ -251,8 +251,6 @@ BACKEND = getenv("TP_BACKEND") or "filesystem"
 
 if ( BACKEND in COMPATIBLE_BACKENDS ):
 	b = importlib.import_module('backends.'+BACKEND)
-	# if ( BACKEND == "filesystem" ):
-	# 	import backends.filesystem as b
 else:
 	print("Configured backend (" + BACKEND + ") is not compatible with current version.")
 	exit(1)

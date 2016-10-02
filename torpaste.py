@@ -1,4 +1,5 @@
 #!bin/python
+# -*- coding: utf-8 -*-
 
 from flask import *
 from hashlib import sha256
@@ -31,14 +32,14 @@ def newpaste():
 	else:
 		if(request.form['content']):
 			try:
-				PasteID = str(sha256(request.form['content']).hexdigest())
+				PasteID = str(sha256(request.form['content'].encode('utf-8')).hexdigest())
 			except:
 				return render_template(
 					"index.html",
 					title = WEBSITE_TITLE,
 					version = VERSION,
 					page = "new",
-					error = "The current version of TorPaste supports ASCII characters only. UTF-8 support is coming soon."
+					error = "An issue occured while handling the paste. Please try again later. If the problem persists, try notifying a system administrator."
 				)
 			try:
 				b.newPaste(PasteID, request.form['content'])
@@ -147,7 +148,7 @@ def viewpaste(pasteid):
 		)
 
 	PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
-	PasteSize = formatSize(len(PasteContent))
+	PasteSize = formatSize(len(PasteContent.encode('utf-8')))
 	return render_template(
 		"view.html",
 		content = PasteContent,

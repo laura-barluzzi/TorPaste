@@ -230,7 +230,7 @@ def aboutTorPaste():
 
 # Functions
 def formatSize(size):
-	scales = ["bytes", "kB", "MB", "GB", "TB", "EB"]
+	scales = ["bytes", "kB", "MB", "GB", "TB", "PB"]
 	count = 0
 	while(1==1):
 		if(size > 1024.0):

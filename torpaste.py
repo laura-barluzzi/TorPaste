@@ -41,6 +41,16 @@ def newpaste():
 					page = "new",
 					error = "An issue occured while handling the paste. Please try again later. If the problem persists, try notifying a system administrator."
 				)
+
+			if ( len(request.form['content'].encode('utf-8')) > MAX_PASTE_SIZE ):
+				return render_template(
+					"index.html",
+					title = WEBSITE_TITLE,
+					version = VERSION,
+					page = "new",
+					error = "The paste sent is too large. This TorPaste instance has a maximum allowed paste size of " + formatSize(MAX_PASTE_SIZE) + "."
+				)
+
 			try:
 				b.newPaste(PasteID, request.form['content'])
 			except b.e.ErrorException as errmsg:
@@ -250,6 +260,36 @@ if ( BACKEND in COMPATIBLE_BACKENDS ):
 		import backends.filesystem as b
 else:
 	print("Configured backend (" + BACKEND + ") is not compatible with current version.")
+	exit(1)
+
+### Maximum Paste Size
+MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE")
+try:
+	MAX_PASTE_SIZE += ""
+except:
+	MAX_PASTE_SIZE  = "1 P"
+
+if ( MAX_PASTE_SIZE[0] == "0" ):
+	MAX_PASTE_SIZE = "1 P"
+
+MAX_PASTE_SIZE = MAX_PASTE_SIZE.split(" ")
+
+try:
+	AMOUNT = int(MAX_PASTE_SIZE[0])
+	UNIT = MAX_PASTE_SIZE[1]
+except:
+	print("Invalid TP_PASTE_MAX_SIZE: " + " ".join(MAX_PASTE_SIZE))
+	exit(1)
+
+orders = ["B", "k", "M", "G", "T", "P"]
+
+if ( not UNIT in orders ):
+	print("Invalid Unit Size: " + UNIT)
+
+try:
+	MAX_PASTE_SIZE = AMOUNT * 1024**orders.index(UNIT)
+except:
+	print("An unknown error occured while determining max paste size.")
 	exit(1)
 
 ## Initialize Backend

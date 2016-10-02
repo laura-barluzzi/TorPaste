@@ -106,6 +106,10 @@ value which may not work well for you, but makes them all optional.
 * `TP_BACKEND` : Use this variable to select a backend for TorPaste to use. The
 available backends for each version are included in the `COMPATIBLE_BACKENDS` variable
 inside `torpaste.py`. *Default:* `filesystem`
+* `TP_PASTE_MAX_SIZE` : Use this variable to set the maximum paste size, in bytes. The
+possible values are formatted as `<amount> <unit>`, for example `10 M`, or `128 B`,
+or `16 k`. Any value that starts with `0` changes this limit to unlimited. *Default:*
+`0`
 
 ### Backend ENV Variables
 Each backend may need one or more additional `ENV` variables to work. For example,

@@ -6,10 +6,10 @@ from hashlib import sha256
 from datetime import datetime
 import os, time
 from os import getenv
-import backends.filesystem as b
 app = Flask(__name__)
 
 VERSION = "0.5"
+COMPATIBLE_BACKENDS = ["filesystem"]
 
 @app.route('/')
 def index():
@@ -238,6 +238,19 @@ try:
 	WEBSITE_TITLE += ""
 except:
 	WEBSITE_TITLE  = "Tor Paste"
+
+### Backend Used
+BACKEND = getenv("TP_BACKEND")
+try:
+	BACKEND += ""
+except:
+	BACKEND  = "filesystem"
+if ( BACKEND in COMPATIBLE_BACKENDS ):
+	if ( BACKEND == "filesystem" ):
+		import backends.filesystem as b
+else:
+	print("Configured backend (" + BACKEND + ") is not compatible with current version.")
+	exit(1)
 
 ## Initialize Backend
 try:

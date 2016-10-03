@@ -26,7 +26,7 @@ def index():
 
 
 @app.route("/new", methods=["GET", "POST"])
-def newpaste():
+def new_paste():
     if request.method == "GET":
         return render_template(
             "index.html",
@@ -101,7 +101,7 @@ def newpaste():
 
 
 @app.route("/view/<pasteid>")
-def viewpaste(pasteid):
+def view_paste(pasteid):
     if not pasteid.isalnum():
         return Response(
             render_template(
@@ -182,7 +182,7 @@ def viewpaste(pasteid):
 
 
 @app.route("/raw/<pasteid>")
-def rawpaste(pasteid):
+def raw_paste(pasteid):
     if not pasteid.isalnum():
         return "No such paste", 404
     if len(pasteid) < 6:
@@ -292,7 +292,7 @@ if UNIT not in orders:
 try:
     MAX_PASTE_SIZE = AMOUNT * 1024 ** orders.index(UNIT)
 except:
-    print("An unknown error occured while determining max paste size.")
+    print("An unknown error occurred while determining max paste size.")
     exit(1)
 
 # Initialize Backend

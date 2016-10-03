@@ -1,6 +1,7 @@
 #!bin/python
 # -*- coding: utf-8 -*-
 
+import importlib
 import time
 from datetime import datetime
 from hashlib import sha256
@@ -25,7 +26,7 @@ def index():
 
 
 @app.route("/new", methods=["GET", "POST"])
-def new_paste():
+def newpaste():
     if request.method == "GET":
         return render_template(
             "index.html",
@@ -43,7 +44,7 @@ def new_paste():
                     title=WEBSITE_TITLE,
                     version=VERSION,
                     page="new",
-                    error="An issue occured while handling the paste. Please try again later. If the problem persists, \
+                    error="An issue occurred while handling the paste. Please try again later. If the problem persists, \
                     try notifying a system administrator."
                 )
 
@@ -59,7 +60,7 @@ def new_paste():
                 )
 
             try:
-                b.new_paste(paste_id, request.form['content'])
+                b.newPaste(paste_id, request.form['content'])
             except b.e.ErrorException as errmsg:
                 return render_template(
                     "index.html",
@@ -70,7 +71,7 @@ def new_paste():
                 )
 
             try:
-                b.update_paste_metadata(
+                b.updatePasteMetadata(
                     paste_id,
                     {
                         "date": unicode(int(time.time()))
@@ -100,7 +101,7 @@ def new_paste():
 
 
 @app.route("/view/<pasteid>")
-def view_paste(pasteid):
+def viewpaste(pasteid):
     if not pasteid.isalnum():
         return Response(
             render_template(
@@ -124,7 +125,7 @@ def view_paste(pasteid):
             ),
             400
         )
-    if not b.does_paste_exist(pasteid):
+    if not b.doesPasteExist(pasteid):
         return Response(
             render_template(
                 "index.html",
@@ -137,7 +138,7 @@ def view_paste(pasteid):
         )
 
     try:
-        paste_content = b.get_paste_contents(pasteid)
+        paste_content = b.getPasteContents(pasteid)
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
@@ -148,7 +149,7 @@ def view_paste(pasteid):
         )
 
     try:
-        paste_date = b.get_paste_metadata_value(pasteid, "date")
+        paste_date = b.getPasteMetadataValue(pasteid, "date")
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
@@ -180,16 +181,16 @@ def view_paste(pasteid):
     )
 
 
-@app.route("/raw/<paste_id>")
-def raw_paste(paste_id):
-    if not paste_id.isalnum():
+@app.route("/raw/<pasteid>")
+def rawpaste(pasteid):
+    if not pasteid.isalnum():
         return "No such paste", 404
-    if len(paste_id) < 6:
+    if len(pasteid) < 6:
         return "No such paste", 404
-    if not b.does_paste_exist(paste_id):
+    if not b.doesPasteExist(pasteid):
         return "No such paste", 404
     try:
-        paste_content = b.get_paste_contents(paste_id)
+        paste_content = b.getPasteContents(pasteid)
     except b.e.ErrorException as errmsg:
         return Response(
             errmsg,
@@ -257,31 +258,19 @@ def format_size(size):
 # Required Initialization Code
 # Handle Environment Variables (for configuration)
 # Web App <title>
-WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE")
-try:
-    WEBSITE_TITLE += ""
-except:
-    WEBSITE_TITLE = "Tor Paste"
+WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"
 
 # Backend Used
-BACKEND = getenv("TP_BACKEND")
-try:
-    BACKEND += ""
-except:
-    BACKEND = "filesystem"
+BACKEND = getenv("TP_BACKEND") or "filesystem"
+
 if BACKEND in COMPATIBLE_BACKENDS:
-    if BACKEND == "filesystem":
-        import backends.filesystem as b
+    b = importlib.import_module('backends.' + BACKEND)
 else:
     print("Configured backend (" + BACKEND + ") is not compatible with current version.")
     exit(1)
 
 # Maximum Paste Size
-MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE")
-try:
-    MAX_PASTE_SIZE += ""
-except:
-    MAX_PASTE_SIZE = "1 P"
+MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE") or "1 P"
 
 if MAX_PASTE_SIZE[0] == "0":
     MAX_PASTE_SIZE = "1 P"
@@ -303,12 +292,12 @@ if UNIT not in orders:
 try:
     MAX_PASTE_SIZE = AMOUNT * 1024 ** orders.index(UNIT)
 except:
-    print("An unknown error occurred while determining max paste size.")
+    print("An unknown error occured while determining max paste size.")
     exit(1)
 
 # Initialize Backend
 try:
-    b.initialize_backend()
+    b.initializeBackend()
 except:
     print("Failed to initialize backend")
     exit(1)

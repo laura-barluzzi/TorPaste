@@ -5,6 +5,7 @@ from flask import *
 from hashlib import sha256
 from datetime import datetime
 import os, time
+import importlib
 from os import getenv
 app = Flask(__name__)
 
@@ -243,31 +244,19 @@ def formatSize(size):
 # Required Initialization Code
 ## Handle Environment Variables (for configuration)
 ### Web App <title>
-WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE")
-try:
-	WEBSITE_TITLE += ""
-except:
-	WEBSITE_TITLE  = "Tor Paste"
+WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"
 
 ### Backend Used
-BACKEND = getenv("TP_BACKEND")
-try:
-	BACKEND += ""
-except:
-	BACKEND  = "filesystem"
+BACKEND = getenv("TP_BACKEND") or "filesystem"
+
 if ( BACKEND in COMPATIBLE_BACKENDS ):
-	if ( BACKEND == "filesystem" ):
-		import backends.filesystem as b
+	b = importlib.import_module('backends.'+BACKEND)
 else:
 	print("Configured backend (" + BACKEND + ") is not compatible with current version.")
 	exit(1)
 
 ### Maximum Paste Size
-MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE")
-try:
-	MAX_PASTE_SIZE += ""
-except:
-	MAX_PASTE_SIZE  = "1 P"
+MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE") or "1 P"
 
 if ( MAX_PASTE_SIZE[0] == "0" ):
 	MAX_PASTE_SIZE = "1 P"

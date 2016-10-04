@@ -31,7 +31,7 @@ We use [PEP8](https://www.python.org/dev/peps/pep-0008/) as coding style convent
 Before creating a merge request, please test TorPaste. A unit test suite is under development, but in the meantime, make sure the following things still work when your work is done:
 
 - running TorPaste from the command line: `pip install -r requirements.txt; python torpaste.py` works;
-- running TorPaste from Docker: `docker build daknob/torpaste . ; docker run -d -p 5000:80 daknob/torpaste` works, and afterwards, `docker ps` shows the container active;
+- running TorPaste from Docker: `docker build -t daknob/torpaste . ; docker run -p 5000:80 daknob/torpaste` works, and afterwards, `docker ps` shows the container active;
 - in both cases above, TorPaste is accessible at localhost:5000;
 - in both cases, you can create a new paste, even with UTF-8 characters (here's one that you can copy/paste: ✔);
 - in both cases, pastes' metadata is displayed and correct (✔ counts as three bytes!);

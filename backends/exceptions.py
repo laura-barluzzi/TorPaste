@@ -12,7 +12,7 @@ class ErrorException(Exception):
         self.value = value
 
     def __str__(self):
-        return unicode(self.value)
+        return str(self.value)
 
 
 class WarningException(Exception):
@@ -20,7 +20,7 @@ class WarningException(Exception):
         self.value = value
 
     def __str__(self):
-        return unicode(self.value)
+        return str(self.value)
 
 
 class InfoException(Exception):
@@ -28,4 +28,4 @@ class InfoException(Exception):
         self.value = value
 
     def __str__(self):
-        return unicode(self.value)
+        return str(self.value)

@@ -26,7 +26,7 @@ def index():
 
 
 @app.route("/new", methods=["GET", "POST"])
-def newpaste():
+def new_paste():
     if request.method == "GET":
         return render_template(
             "index.html",
@@ -37,14 +37,14 @@ def newpaste():
     else:
         if request.form['content']:
             try:
-                PasteID = str(sha256(request.form['content'].encode('utf-8')).hexdigest())
+                paste_id = str(sha256(request.form['content'].encode('utf-8')).hexdigest())
             except:
                 return render_template(
                     "index.html",
                     title=WEBSITE_TITLE,
                     version=VERSION,
                     page="new",
-                    error="An issue occured while handling the paste. Please try again later. If the problem persists,\
+                    error="An issue occurred while handling the paste. Please try again later. If the problem persists,\
                      try notifying a system administrator."
                 )
 
@@ -55,11 +55,11 @@ def newpaste():
                     version=VERSION,
                     page="new",
                     error="The paste sent is too large. This TorPaste instance has a maximum allowed paste size of "
-                          + formatSize(MAX_PASTE_SIZE) + "."
+                          + format_size(MAX_PASTE_SIZE) + "."
                 )
 
             try:
-                b.newPaste(PasteID, request.form['content'])
+                b.new_paste(paste_id, request.form['content'])
             except b.e.ErrorException as errmsg:
                 return render_template(
                     "index.html",
@@ -70,8 +70,8 @@ def newpaste():
                 )
 
             try:
-                b.updatePasteMetadata(
-                    PasteID,
+                b.update_paste_metadata(
+                    paste_id,
                     {
                         "date": unicode(int(time.time()))
                     }
@@ -85,7 +85,7 @@ def newpaste():
                     error=errmsg
                 )
 
-            return redirect("/view/" + PasteID)
+            return redirect("/view/" + paste_id)
         else:
             return Response(
                 render_template(
@@ -100,8 +100,8 @@ def newpaste():
 
 
 @app.route("/view/<pasteid>")
-def viewpaste(pasteid):
-    if (not pasteid.isalnum()):
+def view_paste(pasteid):
+    if not pasteid.isalnum():
         return Response(
             render_template(
                 "index.html",
@@ -112,7 +112,7 @@ def viewpaste(pasteid):
             ),
             400
         )
-    if (len(pasteid) < 6):
+    if len(pasteid) < 6:
         return Response(
             render_template(
                 "index.html",
@@ -124,7 +124,7 @@ def viewpaste(pasteid):
             ),
             400
         )
-    if (not b.doesPasteExist(pasteid)):
+    if not b.does_paste_exist(pasteid):
         return Response(
             render_template(
                 "index.html",
@@ -137,7 +137,7 @@ def viewpaste(pasteid):
         )
 
     try:
-        PasteContent = b.getPasteContents(pasteid)
+        paste_content = b.get_paste_contents(pasteid)
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
@@ -148,7 +148,7 @@ def viewpaste(pasteid):
         )
 
     try:
-        PasteDate = b.getPasteMetadataValue(pasteid, "date")
+        paste_date = b.get_paste_metadata_value(pasteid, "date")
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
@@ -166,13 +166,13 @@ def viewpaste(pasteid):
             page="new"
         )
 
-    PasteDate = datetime.fromtimestamp(int(PasteDate) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
-    PasteSize = formatSize(len(PasteContent.encode('utf-8')))
+    paste_date = datetime.fromtimestamp(int(paste_date) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
+    paste_size = format_size(len(paste_content.encode('utf-8')))
     return render_template(
         "view.html",
-        content=PasteContent,
-        date=PasteDate,
-        size=PasteSize,
+        content=paste_content,
+        date=paste_date,
+        size=paste_size,
         pid=pasteid,
         title=WEBSITE_TITLE,
         version=VERSION,
@@ -181,22 +181,22 @@ def viewpaste(pasteid):
 
 
 @app.route("/raw/<pasteid>")
-def rawpaste(pasteid):
+def raw_paste(pasteid):
     if not pasteid.isalnum():
         return "No such paste", 404
     if len(pasteid) < 6:
         return "No such paste", 404
-    if not b.doesPasteExist(pasteid):
+    if not b.does_paste_exist(pasteid):
         return "No such paste", 404
     try:
-        PasteContent = b.getPasteContents(pasteid)
+        paste_content = b.get_paste_contents(pasteid)
     except b.e.ErrorException as errmsg:
         return Response(
             errmsg,
             500
         )
     return Response(
-        PasteContent,
+        paste_content,
         mimetype="text/plain"
     )
 
@@ -204,7 +204,7 @@ def rawpaste(pasteid):
 @app.route("/list")
 def list():
     try:
-        PasteList = b.getAllPasteIDs()
+        paste_list = b.get_all_paste_ids()
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
@@ -214,7 +214,7 @@ def list():
             error=errmsg
         )
 
-    if PasteList[0] == 'none':
+    if paste_list[0] == 'none':
         return render_template(
             "list.html",
             pastes=['none'],
@@ -224,7 +224,7 @@ def list():
         )
     return render_template(
         "list.html",
-        pastes=PasteList,
+        pastes=paste_list,
         title=WEBSITE_TITLE,
         version=VERSION,
         page="list"
@@ -232,7 +232,7 @@ def list():
 
 
 @app.route("/about")
-def aboutTorPaste():
+def about_tor_paste():
     return render_template(
         "about.html",
         title=WEBSITE_TITLE,
@@ -242,7 +242,7 @@ def aboutTorPaste():
 
 
 # Functions
-def formatSize(size):
+def format_size(size):
     scales = ["bytes", "kB", "MB", "GB", "TB", "PB"]
     count = 0
     while 1 == 1:
@@ -291,12 +291,12 @@ if UNIT not in orders:
 try:
     MAX_PASTE_SIZE = AMOUNT * 1024 ** orders.index(UNIT)
 except:
-    print("An unknown error occured while determining max paste size.")
+    print("An unknown error occurred while determining max paste size.")
     exit(1)
 
 # Initialize Backend
 try:
-    b.initializeBackend()
+    b.initialize_backend()
 except:
     print("Failed to initialize backend")
     exit(1)

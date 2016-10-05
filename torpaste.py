@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from hashlib import sha256
 from os import getenv
+import sys
 
 from flask import *
 
@@ -73,7 +74,7 @@ def new_paste():
                 b.update_paste_metadata(
                     paste_id,
                     {
-                        "date": unicode(int(time.time()))
+                        "date": str(int(time.time()))
                     }
                 )
             except b.e.ErrorException as errmsg:
@@ -255,6 +256,10 @@ def format_size(size):
 
 
 # Required Initialization Code
+
+# necessary for local modules import (backends, exceptions)
+sys.path.append('.')
+
 # Handle Environment Variables (for configuration)
 # Web App <title>
 WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"

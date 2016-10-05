@@ -1,11 +1,13 @@
 FROM alpine:latest
 MAINTAINER Antonios A. Chariton <daknob@daknob.net>
 
-# Install Python and pip
-RUN apk add --update python py-pip
+# Install Python 3 and pip3
+RUN apk add --update python3
+RUN python3 -m ensurepip
+RUN pip3 install --upgrade pip setuptools
 
 # Install a Production WSGI Web Server
-RUN pip install gunicorn
+RUN pip3 install gunicorn
 
 # Move everything inside the container
 RUN mkdir /torpaste
@@ -15,7 +17,7 @@ COPY . /torpaste/.
 WORKDIR /torpaste
 
 # Install the required software
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Expose port *80*
 EXPOSE 80

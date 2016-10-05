@@ -1,7 +1,7 @@
 #!../bin/python
 # -*- coding: utf-8 -*-
 
-import exceptions as e
+import backends.exceptions as e
 import os
 import codecs
 
@@ -88,7 +88,7 @@ def update_paste_metadata(paste_id, metadata):
             try notifying a system administrator.")
 
     try:
-        for k, v in metadata.iteritems():
+        for k, v in metadata.items():
             with codecs.open(ppath + "." + k, encoding="utf-8", mode="w+") as fd:
                 fd.write(v)
     except:

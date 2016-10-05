@@ -12,7 +12,7 @@ from flask import *
 
 app = Flask(__name__)
 
-VERSION = "0.5"
+VERSION = "0.6"
 COMPATIBLE_BACKENDS = ["filesystem"]
 
 

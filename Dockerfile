@@ -1,8 +1,10 @@
 FROM alpine:latest
 MAINTAINER Antonios A. Chariton <daknob@daknob.net>
 
-# Install Python 3, which comes with pip3
+# Install Python 3 and pip3
 RUN apk add --update python3
+RUN python3 -m ensurepip
+RUN pip3 install --upgrade pip setuptools
 
 # Install a Production WSGI Web Server
 RUN pip3 install gunicorn

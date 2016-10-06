@@ -55,7 +55,7 @@ storage, be it database tables, folders and files, or anything else.
 import exceptions as e
 
 
-def initialize_backend():
+def initialize_backend(backend_config):
     """
     This method is called when the Flask application starts.
     Here you can do any initialization that may be required,

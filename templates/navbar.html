@@ -15,9 +15,11 @@
     			</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
+					{% if config.PASTE_LIST_ACTIVE %}
 						<li class="{% if page == 'list' %}active{% endif %}">
 							<a href="/list">Pastes</a>
 						</li>
+					{% endif %}
 						<li class="{% if page == 'about' %}active{% endif %}">
 							<a href="/about">About</a>
 						</li>

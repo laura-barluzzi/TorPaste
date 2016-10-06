@@ -15,12 +15,11 @@ app = Flask(__name__)
 VERSION = "0.6"
 COMPATIBLE_BACKENDS = ["filesystem"]
 
-
 @app.route('/')
 def index():
     return render_template(
         "index.html",
-        title=WEBSITE_TITLE,
+        config = config,
         version=VERSION,
         page="main"
     )
@@ -31,7 +30,7 @@ def new_paste():
     if request.method == "GET":
         return render_template(
             "index.html",
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             page="new"
         )
@@ -42,21 +41,21 @@ def new_paste():
             except:
                 return render_template(
                     "index.html",
-                    title=WEBSITE_TITLE,
+                    config = config,
                     version=VERSION,
                     page="new",
                     error="An issue occurred while handling the paste. Please try again later. If the problem persists,\
                      try notifying a system administrator."
                 )
 
-            if len(request.form['content'].encode('utf-8')) > MAX_PASTE_SIZE:
+            if len(request.form['content'].encode('utf-8')) > config['MAX_PASTE_SIZE']:
                 return render_template(
                     "index.html",
-                    title=WEBSITE_TITLE,
+                    config = config,
                     version=VERSION,
                     page="new",
                     error="The paste sent is too large. This TorPaste instance has a maximum allowed paste size of "
-                          + format_size(MAX_PASTE_SIZE) + "."
+                          + format_size(config['MAX_PASTE_SIZE']) + "."
                 )
 
             try:
@@ -64,7 +63,7 @@ def new_paste():
             except b.e.ErrorException as errmsg:
                 return render_template(
                     "index.html",
-                    title=WEBSITE_TITLE,
+                    config = config,
                     version=VERSION,
                     page="new",
                     error=errmsg
@@ -80,7 +79,7 @@ def new_paste():
             except b.e.ErrorException as errmsg:
                 return render_template(
                     "index.html",
-                    title=WEBSITE_TITLE,
+                    config = config,
                     version=VERSION,
                     page="new",
                     error=errmsg
@@ -91,7 +90,7 @@ def new_paste():
             return Response(
                 render_template(
                     "index.html",
-                    title=WEBSITE_TITLE,
+                    config = config,
                     version=VERSION,
                     error="Please enter some text to include in the paste.",
                     page="new"
@@ -106,7 +105,7 @@ def view_paste(pasteid):
         return Response(
             render_template(
                 "index.html",
-                title=WEBSITE_TITLE,
+                config = config,
                 version=VERSION,
                 error="Invalid Paste ID. Please check the link you used or use Pastes button above.",
                 page="new"
@@ -117,7 +116,7 @@ def view_paste(pasteid):
         return Response(
             render_template(
                 "index.html",
-                title=WEBSITE_TITLE,
+                config = config,
                 version=VERSION,
                 error="Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link \
                 you clicked is correct or use the Pastes button above.",
@@ -129,7 +128,7 @@ def view_paste(pasteid):
         return Response(
             render_template(
                 "index.html",
-                title=WEBSITE_TITLE,
+                config = config,
                 version=VERSION,
                 error="A paste with this ID could not be found. Sorry.",
                 page="new"
@@ -142,7 +141,7 @@ def view_paste(pasteid):
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             error=errmsg,
             page="new"
@@ -153,7 +152,7 @@ def view_paste(pasteid):
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             error=errmsg,
             page="new"
@@ -161,7 +160,7 @@ def view_paste(pasteid):
     except b.e.WarningException as errmsg:
         return render_template(
             "index.html",
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             warning=errmsg,
             page="new"
@@ -175,7 +174,7 @@ def view_paste(pasteid):
         date=paste_date,
         size=paste_size,
         pid=pasteid,
-        title=WEBSITE_TITLE,
+        config = config,
         version=VERSION,
         page="view"
     )
@@ -204,12 +203,22 @@ def raw_paste(pasteid):
 
 @app.route("/list")
 def list():
+    # listing disabled!
+    if not config['PASTE_LIST_ACTIVE']:
+        return render_template(
+            "index.html",
+            config = config,
+            version=VERSION,
+            page="new",
+            error='Paste listing has been disabled by the administrator.'
+        )
+
     try:
         paste_list = b.get_all_paste_ids()
     except b.e.ErrorException as errmsg:
         return render_template(
             "index.html",
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             page="new",
             error=errmsg
@@ -219,14 +228,14 @@ def list():
         return render_template(
             "list.html",
             pastes=['none'],
-            title=WEBSITE_TITLE,
+            config = config,
             version=VERSION,
             page="list"
         )
     return render_template(
         "list.html",
         pastes=paste_list,
-        title=WEBSITE_TITLE,
+        config = config,
         version=VERSION,
         page="list"
     )
@@ -236,7 +245,7 @@ def list():
 def about_tor_paste():
     return render_template(
         "about.html",
-        title=WEBSITE_TITLE,
+        config = config,
         version=VERSION,
         page="about"
     )
@@ -261,47 +270,64 @@ def format_size(size):
 sys.path.append('.')
 
 # Handle Environment Variables (for configuration)
-# Web App <title>
-WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"
+def load_config():
+    # Web App <title>
+    WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"
 
-# Backend Used
-BACKEND = getenv("TP_BACKEND") or "filesystem"
+    # Backend Used
+    BACKEND = getenv("TP_BACKEND") or "filesystem"
 
-if BACKEND in COMPATIBLE_BACKENDS:
-    b = importlib.import_module('backends.' + BACKEND)
-else:
-    print("Configured backend (" + BACKEND + ") is not compatible with current version.")
-    exit(1)
+    if ( BACKEND in COMPATIBLE_BACKENDS ):
+        b = importlib.import_module('backends.'+BACKEND)
+    else:
+        print("Configured backend (" + BACKEND + ") is not compatible with current version.")
+        exit(1)
 
-# Maximum Paste Size
-MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE") or "1 P"
+    ### Maximum Paste Size
+    MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE") or "1 P"
 
-if MAX_PASTE_SIZE[0] == "0":
-    MAX_PASTE_SIZE = "1 P"
+    if ( MAX_PASTE_SIZE[0] == "0" ):
+        MAX_PASTE_SIZE = "1 P"
 
-MAX_PASTE_SIZE = MAX_PASTE_SIZE.split(" ")
+    MAX_PASTE_SIZE = MAX_PASTE_SIZE.split(" ")
 
-try:
-    AMOUNT = int(MAX_PASTE_SIZE[0])
-    UNIT = MAX_PASTE_SIZE[1]
-except:
-    print("Invalid TP_PASTE_MAX_SIZE: " + " ".join(MAX_PASTE_SIZE))
-    exit(1)
+    try:
+        AMOUNT = int(MAX_PASTE_SIZE[0])
+        UNIT = MAX_PASTE_SIZE[1]
+    except:
+        print("Invalid TP_PASTE_MAX_SIZE: " + " ".join(MAX_PASTE_SIZE))
+        exit(1)
 
-orders = ["B", "k", "M", "G", "T", "P"]
+    orders = ["B", "k", "M", "G", "T", "P"]
 
-if UNIT not in orders:
-    print("Invalid Unit Size: " + UNIT)
+    if ( not UNIT in orders ):
+        print("Invalid Unit Size: " + UNIT)
 
-try:
-    MAX_PASTE_SIZE = AMOUNT * 1024 ** orders.index(UNIT)
-except:
-    print("An unknown error occurred while determining max paste size.")
-    exit(1)
+    try:
+        MAX_PASTE_SIZE = AMOUNT * 1024**orders.index(UNIT)
+    except:
+        print("An unknown error occured while determining max paste size.")
+        exit(1)
+
+    ### Disable the paste listing feature
+    PASTE_LIST_ACTIVE = getenv("TP_PASTE_LIST_ACTIVE") or True
+    if PASTE_LIST_ACTIVE in ["False", "false", 0, "0"]:
+        PASTE_LIST_ACTIVE = False
+
+    return {
+        "MAX_PASTE_SIZE": MAX_PASTE_SIZE,
+        "WEBSITE_TITLE": WEBSITE_TITLE,
+        "PASTE_LIST_ACTIVE": PASTE_LIST_ACTIVE,
+        "b": b,
+        "backend_params": {}
+    }
+
+config = load_config()
+b = config['b']
 
 # Initialize Backend
 try:
-    b.initialize_backend()
+    b.initialize_backend(config['backend_params'])
 except:
     print("Failed to initialize backend")
     exit(1)

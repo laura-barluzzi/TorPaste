@@ -277,16 +277,16 @@ def load_config():
     # Backend Used
     BACKEND = getenv("TP_BACKEND") or "filesystem"
 
-    if ( BACKEND in COMPATIBLE_BACKENDS ):
+    if BACKEND in COMPATIBLE_BACKENDS:
         b = importlib.import_module('backends.'+BACKEND)
     else:
         print("Configured backend (" + BACKEND + ") is not compatible with current version.")
         exit(1)
 
-    ### Maximum Paste Size
+    # Maximum Paste Size
     MAX_PASTE_SIZE = getenv("TP_PASTE_MAX_SIZE") or "1 P"
 
-    if ( MAX_PASTE_SIZE[0] == "0" ):
+    if MAX_PASTE_SIZE[0] == "0":
         MAX_PASTE_SIZE = "1 P"
 
     MAX_PASTE_SIZE = MAX_PASTE_SIZE.split(" ")
@@ -300,7 +300,7 @@ def load_config():
 
     orders = ["B", "k", "M", "G", "T", "P"]
 
-    if ( not UNIT in orders ):
+    if UNIT not in orders:
         print("Invalid Unit Size: " + UNIT)
 
     try:

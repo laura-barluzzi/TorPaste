@@ -110,6 +110,8 @@ inside `torpaste.py`. *Default:* `filesystem`
 possible values are formatted as `<amount> <unit>`, for example `10 M`, or `128 B`,
 or `16 k`. Any value that starts with `0` changes this limit to unlimited. *Default:*
 `0`
+* `TP_PASTE_LIST_ACTIVE` : Use this variable to enable or disable the paste listing
+available in the `Pastes` menu. *Default:* `True`
 
 ### Backend ENV Variables
 Each backend may need one or more additional `ENV` variables to work. For example,

@@ -44,7 +44,7 @@ def new_paste(paste_id, paste_content):
     ppath = "pastes/" + a + "/" + b + "/" + paste_id
 
     try:
-        with codecs.open(ppath, encoding="utf-8", mode="w+") as fd:
+        with codecs.open(ppath, encoding = "utf-8", mode = "w+") as fd:
             fd.write(paste_content)
     except:
         raise e.ErrorException(
@@ -89,7 +89,7 @@ def update_paste_metadata(paste_id, metadata):
 
     try:
         for k, v in metadata.items():
-            with codecs.open(ppath + "." + k, encoding="utf-8", mode="w+") as fd:
+            with codecs.open(ppath + "." + k, encoding = "utf-8", mode = "w+") as fd:
                 fd.write(v)
     except:
         raise e.ErrorException(
@@ -128,7 +128,7 @@ def get_paste_contents(paste_id):
     b = paste_id[2:4]
 
     try:
-        with codecs.open("pastes/" + a + "/" + b + "/" + paste_id, encoding="utf-8", mode="r") as fd:
+        with codecs.open("pastes/" + a + "/" + b + "/" + paste_id, encoding = "utf-8", mode = "r") as fd:
             return fd.read()
     except:
         raise e.ErrorException(
@@ -155,7 +155,7 @@ def get_paste_metadata(paste_id):
         for f in os.listdir("pastes/" + a + "/" + b + "/"):
             if (paste_id in f) and ("." in f):
                 t = f.split(".")[1]
-                with codecs.open("pastes/" + a + "/" + b + "/" + f, encoding="utf-8", mode="r") as fd:
+                with codecs.open("pastes/" + a + "/" + b + "/" + f, encoding = "utf-8", mode = "r") as fd:
                     ret[t] = fd.read()
     except:
         raise e.ErrorException(

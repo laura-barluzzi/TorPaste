@@ -318,8 +318,7 @@ def load_config():
         "MAX_PASTE_SIZE": MAX_PASTE_SIZE,
         "WEBSITE_TITLE": WEBSITE_TITLE,
         "PASTE_LIST_ACTIVE": PASTE_LIST_ACTIVE,
-        "b": b,
-        "backend_params": {}
+        "b": b
     }
 
 config = load_config()
@@ -327,7 +326,7 @@ b = config['b']
 
 # Initialize Backend
 try:
-    b.initialize_backend(config['backend_params'])
+    b.initialize_backend()
 except:
     print("Failed to initialize backend")
     exit(1)

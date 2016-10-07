@@ -6,7 +6,7 @@ import os
 import codecs
 
 
-def initialize_backend(backend_config):
+def initialize_backend():
     """
     This method is called when the Flask application starts.
     Here you can do any initialization that may be required,

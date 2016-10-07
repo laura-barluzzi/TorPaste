@@ -20,19 +20,19 @@ def index():
     return render_template(
         "index.html",
         config = config,
-        version=VERSION,
-        page="main"
+        version = VERSION,
+        page = "main"
     )
 
 
-@app.route("/new", methods=["GET", "POST"])
+@app.route("/new", methods = ["GET", "POST"])
 def new_paste():
     if request.method == "GET":
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            page="new"
+            version = VERSION,
+            page = "new"
         )
     else:
         if request.form['content']:
@@ -42,9 +42,9 @@ def new_paste():
                 return render_template(
                     "index.html",
                     config = config,
-                    version=VERSION,
-                    page="new",
-                    error="An issue occurred while handling the paste. Please try again later. If the problem persists,\
+                    version = VERSION,
+                    page = "new",
+                    error = "An issue occurred while handling the paste. Please try again later. If the problem persists,\
                      try notifying a system administrator."
                 )
 
@@ -52,9 +52,9 @@ def new_paste():
                 return render_template(
                     "index.html",
                     config = config,
-                    version=VERSION,
-                    page="new",
-                    error="The paste sent is too large. This TorPaste instance has a maximum allowed paste size of "
+                    version = VERSION,
+                    page = "new",
+                    error = "The paste sent is too large. This TorPaste instance has a maximum allowed paste size of "
                           + format_size(config['MAX_PASTE_SIZE']) + "."
                 )
 
@@ -64,9 +64,9 @@ def new_paste():
                 return render_template(
                     "index.html",
                     config = config,
-                    version=VERSION,
-                    page="new",
-                    error=errmsg
+                    version = VERSION,
+                    page = "new",
+                    error = errmsg
                 )
 
             try:
@@ -80,9 +80,9 @@ def new_paste():
                 return render_template(
                     "index.html",
                     config = config,
-                    version=VERSION,
-                    page="new",
-                    error=errmsg
+                    version = VERSION,
+                    page = "new",
+                    error = errmsg
                 )
 
             return redirect("/view/" + paste_id)
@@ -91,9 +91,9 @@ def new_paste():
                 render_template(
                     "index.html",
                     config = config,
-                    version=VERSION,
-                    error="Please enter some text to include in the paste.",
-                    page="new"
+                    version = VERSION,
+                    error = "Please enter some text to include in the paste.",
+                    page = "new"
                 ),
                 400
             )
@@ -106,9 +106,9 @@ def view_paste(pasteid):
             render_template(
                 "index.html",
                 config = config,
-                version=VERSION,
-                error="Invalid Paste ID. Please check the link you used or use Pastes button above.",
-                page="new"
+                version = VERSION,
+                error = "Invalid Paste ID. Please check the link you used or use Pastes button above.",
+                page = "new"
             ),
             400
         )
@@ -117,10 +117,10 @@ def view_paste(pasteid):
             render_template(
                 "index.html",
                 config = config,
-                version=VERSION,
-                error="Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link \
+                version = VERSION,
+                error = "Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link \
                 you clicked is correct or use the Pastes button above.",
-                page="new"
+                page = "new"
             ),
             400
         )
@@ -129,9 +129,9 @@ def view_paste(pasteid):
             render_template(
                 "index.html",
                 config = config,
-                version=VERSION,
-                error="A paste with this ID could not be found. Sorry.",
-                page="new"
+                version = VERSION,
+                error = "A paste with this ID could not be found. Sorry.",
+                page = "new"
             ),
             404
         )
@@ -142,9 +142,9 @@ def view_paste(pasteid):
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            error=errmsg,
-            page="new"
+            version = VERSION,
+            error = errmsg,
+            page = "new"
         )
 
     try:
@@ -153,30 +153,30 @@ def view_paste(pasteid):
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            error=errmsg,
-            page="new"
+            version = VERSION,
+            error = errmsg,
+            page = "new"
         )
     except b.e.WarningException as errmsg:
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            warning=errmsg,
-            page="new"
+            version = VERSION,
+            warning = errmsg,
+            page = "new"
         )
 
     paste_date = datetime.fromtimestamp(int(paste_date) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
     paste_size = format_size(len(paste_content.encode('utf-8')))
     return render_template(
         "view.html",
-        content=paste_content,
-        date=paste_date,
-        size=paste_size,
-        pid=pasteid,
+        content = paste_content,
+        date = paste_date,
+        size = paste_size,
+        pid = pasteid,
         config = config,
-        version=VERSION,
-        page="view"
+        version = VERSION,
+        page = "view"
     )
 
 
@@ -197,7 +197,7 @@ def raw_paste(pasteid):
         )
     return Response(
         paste_content,
-        mimetype="text/plain"
+        mimetype = "text/plain"
     )
 
 
@@ -208,9 +208,9 @@ def list():
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            page="new",
-            error='Paste listing has been disabled by the administrator.'
+            version = VERSION,
+            page = "new",
+            error = 'Paste listing has been disabled by the administrator.'
         )
 
     try:
@@ -219,25 +219,25 @@ def list():
         return render_template(
             "index.html",
             config = config,
-            version=VERSION,
-            page="new",
-            error=errmsg
+            version = VERSION,
+            page = "new",
+            error = errmsg
         )
 
     if paste_list[0] == 'none':
         return render_template(
             "list.html",
-            pastes=['none'],
+            pastes = ['none'],
             config = config,
-            version=VERSION,
-            page="list"
+            version = VERSION,
+            page = "list"
         )
     return render_template(
         "list.html",
-        pastes=paste_list,
+        pastes = paste_list,
         config = config,
-        version=VERSION,
-        page="list"
+        version = VERSION,
+        page = "list"
     )
 
 
@@ -246,8 +246,8 @@ def about_tor_paste():
     return render_template(
         "about.html",
         config = config,
-        version=VERSION,
-        page="about"
+        version = VERSION,
+        page = "about"
     )
 
 

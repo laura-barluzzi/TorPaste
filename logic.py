@@ -5,6 +5,14 @@ from hashlib import sha256
 
 
 def format_size(size):
+    """
+    This method formats an arbitrary amount of bytes to a printable
+    string. For example 1024 will be converted to 1.0 kB.
+    :param size: an amount of bytes
+    :return: a string that's ready to be printed representing
+             approximately the amount of bytes in a human readable
+             way.
+    """
     scales = ["bytes", "kB", "MB", "GB", "TB", "PB"]
     count = 0
     while (1 == 1):
@@ -17,6 +25,16 @@ def format_size(size):
 
 
 def create_new_paste(content, config):
+    """
+    This method is responsible for creating new pastes by directly
+    talking to the currently used backend. It is also responsible
+    for ensuring the current input is valid, such as for example that
+    it is under the Maximum Allowed Paste Size.
+    :param content: The content of the paste to create
+    :param config: The TorPaste configuration object
+    :return: The result of the action (ERROR/OK), some data (error message/
+             Paste ID) as well as the suggested HTTP Status Code to return.
+    """
     try:
         paste_id = str(sha256(content.encode('utf-8')).hexdigest())
     except:
@@ -48,6 +66,16 @@ def create_new_paste(content, config):
 
 
 def view_existing_paste(paste_id, config):
+    """
+    This method is responsible for checking if a paste with a given Paste ID
+    exists, and if it does, return its contents and needed metadata in order
+    for the View Paste view to work.
+    :param paste_id: The Paste ID to look for.
+    :param config: The TorPaste configuration object
+    :return: The result of the action (ERROR/WARNING/OK), some data (error
+             message / data tuple) as well as the suggested HTTP Status Code
+             to return.
+    """
     if (not paste_id.isalnum()):
         return "ERROR", "Invalid Paste ID. Please check the link " +\
             "you used or use the Pastes button above.", 400
@@ -77,6 +105,13 @@ def view_existing_paste(paste_id, config):
 
 
 def get_paste_listing(config):
+    """
+    This method is responsible for returning a list of all currently saved
+    pastes, or a list with only one element ("none") if there are no pastes.
+    :param config: The TorPaste configuration object
+    :return: A list with all Paste IDs of all stored pastes. If no stored
+             pastes exist, a list with only one element, "none".
+    """
     if (not config['PASTE_LIST_ACTIVE']):
         return "ERROR", "Paste listing has been disabled by the " +\
             "administrator.", 503

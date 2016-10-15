@@ -67,83 +67,39 @@ def new_paste():
 
 @app.route("/view/<pasteid>")
 def view_paste(pasteid):
-    if not pasteid.isalnum():
+    status, data, code = logic.view_existing_paste(pasteid, config)
+
+    if (status == "ERROR"):
         return Response(
             render_template(
                 "index.html",
                 config = config,
                 version = VERSION,
-                error = "Invalid Paste ID. Please check the link you used or use Pastes button above.",
+                error = data,
                 page = "new"
             ),
-            400
+            code
         )
-    if len(pasteid) < 6:
+
+    if (status == "OK"):
+        paste_date = datetime.fromtimestamp(int(data[1]) + time.altzone + 3600)\
+        .strftime("%H:%M:%S %d/%m/%Y")
+
+        paste_size = logic.format_size(len(data[0].encode('utf-8')))
+
         return Response(
             render_template(
-                "index.html",
+                "view.html",
+                content = data[0],
+                date = paste_date,
+                size = paste_size,
+                pid = pasteid,
                 config = config,
                 version = VERSION,
-                error = "Paste ID too short. Usually Paste IDs are longer than 6 characters. Please make sure the link \
-                you clicked is correct or use the Pastes button above.",
-                page = "new"
+                page = "view"
             ),
-            400
+            200
         )
-    if not b.does_paste_exist(pasteid):
-        return Response(
-            render_template(
-                "index.html",
-                config = config,
-                version = VERSION,
-                error = "A paste with this ID could not be found. Sorry.",
-                page = "new"
-            ),
-            404
-        )
-
-    try:
-        paste_content = b.get_paste_contents(pasteid)
-    except b.e.ErrorException as errmsg:
-        return render_template(
-            "index.html",
-            config = config,
-            version = VERSION,
-            error = errmsg,
-            page = "new"
-        )
-
-    try:
-        paste_date = b.get_paste_metadata_value(pasteid, "date")
-    except b.e.ErrorException as errmsg:
-        return render_template(
-            "index.html",
-            config = config,
-            version = VERSION,
-            error = errmsg,
-            page = "new"
-        )
-    except b.e.WarningException as errmsg:
-        return render_template(
-            "index.html",
-            config = config,
-            version = VERSION,
-            warning = errmsg,
-            page = "new"
-        )
-
-    paste_date = datetime.fromtimestamp(int(paste_date) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
-    paste_size = format_size(len(paste_content.encode('utf-8')))
-    return render_template(
-        "view.html",
-        content = paste_content,
-        date = paste_date,
-        size = paste_size,
-        pid = pasteid,
-        config = config,
-        version = VERSION,
-        page = "view"
-    )
 
 
 @app.route("/raw/<pasteid>")

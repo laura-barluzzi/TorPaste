@@ -92,19 +92,22 @@ def view_paste(pasteid):
 
         paste_size = logic.format_size(len(data[0].encode('utf-8')))
 
-        return Response(
-            render_template(
-                "view.html",
-                content=data[0],
-                date=paste_date,
-                size=paste_size,
-                pid=pasteid,
-                config=config,
-                version=VERSION,
-                page="view"
-            ),
-            200
-        )
+    if (status == "WARNING"):
+        paste_date = "Not available."
+
+    return Response(
+        render_template(
+            "view.html",
+            content=data[0],
+            date=paste_date,
+            size=paste_size,
+            pid=pasteid,
+            config=config,
+            version=VERSION,
+            page="view"
+        ),
+        200
+    )
 
 
 @app.route("/raw/<pasteid>")

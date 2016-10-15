@@ -71,3 +71,18 @@ def view_existing_paste(paste_id, config):
         return "WARNING", errmsg, 500
 
     return "OK", (paste_content, paste_date), 200
+
+def get_paste_listing(config):
+    if (not config['PASTE_LIST_ACTIVE']):
+        return "ERROR", "Paste listing has been disabled by the administrator.",
+        503
+
+    try:
+        paste_list = config['b'].get_all_paste_ids()
+    except config['b'].e.ErrorException as errmsg:
+        return "ERROR", errmsg, 500
+
+    if (paste_list[0] == "none"):
+        return "OK", "none", 200
+
+    return "OK", paste_list, 200

@@ -118,43 +118,29 @@ def raw_paste(pasteid):
 
 @app.route("/list")
 def list():
-    # listing disabled!
-    if not config['PASTE_LIST_ACTIVE']:
-        return render_template(
-            "index.html",
-            config = config,
-            version = VERSION,
-            page = "new",
-            error = 'Paste listing has been disabled by the administrator.'
+    status, data, code = logic.get_paste_listing(config)
+
+    if (status == "ERROR"):
+        return Response(
+            render_template(
+                "index.html",
+                config = config,
+                version = VERSION,
+                page = "new",
+                error = data
+            ),
+            code
         )
 
-    try:
-        paste_list = b.get_all_paste_ids()
-    except b.e.ErrorException as errmsg:
-        return render_template(
-            "index.html",
-            config = config,
-            version = VERSION,
-            page = "new",
-            error = errmsg
-        )
-
-    if paste_list[0] == 'none':
-        return render_template(
+    return Response(
+        render_template(
             "list.html",
-            pastes = ['none'],
+            pastes = data,
             config = config,
             version = VERSION,
             page = "list"
         )
-    return render_template(
-        "list.html",
-        pastes = paste_list,
-        config = config,
-        version = VERSION,
-        page = "list"
     )
-
 
 @app.route("/about")
 def about_tor_paste():

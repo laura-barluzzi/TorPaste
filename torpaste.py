@@ -15,24 +15,25 @@ app = Flask(__name__)
 VERSION = "0.6"
 COMPATIBLE_BACKENDS = ["filesystem"]
 
+
 @app.route('/')
 def index():
     return render_template(
         "index.html",
-        config = config,
-        version = VERSION,
-        page = "main"
+        config=config,
+        version=VERSION,
+        page="main"
     )
 
 
-@app.route("/new", methods = ["GET", "POST"])
+@app.route("/new", methods=["GET", "POST"])
 def new_paste():
     if request.method == "GET":
         return render_template(
             "index.html",
-            config = config,
-            version = VERSION,
-            page = "new"
+            config=config,
+            version=VERSION,
+            page="new"
         )
     else:
         if (request.form['content']):
@@ -44,10 +45,10 @@ def new_paste():
                 return Response(
                     render_template(
                         "index.html",
-                        config = config,
-                        version = VERSION,
-                        page = "new",
-                        error = message
+                        config=config,
+                        version=VERSION,
+                        page="new",
+                        error=message
                     ),
                     400
                 )
@@ -58,10 +59,10 @@ def new_paste():
             return Response(
                 render_template(
                     "index.html",
-                    config = config,
-                    version = VERSION,
-                    error = "Please enter some text to include in the paste.",
-                    page = "new"
+                    config=config,
+                    version=VERSION,
+                    error="Please enter some text to include in the paste.",
+                    page="new"
                 ),
                 400
             )
@@ -75,30 +76,32 @@ def view_paste(pasteid):
         return Response(
             render_template(
                 "index.html",
-                config = config,
-                version = VERSION,
-                error = data,
-                page = "new"
+                config=config,
+                version=VERSION,
+                error=data,
+                page="new"
             ),
             code
         )
 
     if (status == "OK"):
-        paste_date = datetime.fromtimestamp(int(data[1]) + time.altzone + 3600)\
-        .strftime("%H:%M:%S %d/%m/%Y")
+        paste_date = datetime.fromtimestamp(
+            int(
+                data[1]
+            ) + time.altzone + 3600).strftime("%H:%M:%S %d/%m/%Y")
 
         paste_size = logic.format_size(len(data[0].encode('utf-8')))
 
         return Response(
             render_template(
                 "view.html",
-                content = data[0],
-                date = paste_date,
-                size = paste_size,
-                pid = pasteid,
-                config = config,
-                version = VERSION,
-                page = "view"
+                content=data[0],
+                date=paste_date,
+                size=paste_size,
+                pid=pasteid,
+                config=config,
+                version=VERSION,
+                page="view"
             ),
             200
         )
@@ -123,10 +126,10 @@ def list():
         return Response(
             render_template(
                 "index.html",
-                config = config,
-                version = VERSION,
-                page = "new",
-                error = data
+                config=config,
+                version=VERSION,
+                page="new",
+                error=data
             ),
             code
         )
@@ -134,20 +137,21 @@ def list():
     return Response(
         render_template(
             "list.html",
-            pastes = data,
-            config = config,
-            version = VERSION,
-            page = "list"
+            pastes=data,
+            config=config,
+            version=VERSION,
+            page="list"
         )
     )
+
 
 @app.route("/about")
 def about_tor_paste():
     return render_template(
         "about.html",
-        config = config,
-        version = VERSION,
-        page = "about"
+        config=config,
+        version=VERSION,
+        page="about"
     )
 
 
@@ -155,6 +159,7 @@ def about_tor_paste():
 
 # necessary for local modules import (backends, exceptions)
 sys.path.append('.')
+
 
 # Handle Environment Variables (for configuration)
 def load_config():
@@ -167,8 +172,10 @@ def load_config():
     if BACKEND in COMPATIBLE_BACKENDS:
         b = importlib.import_module('backends.'+BACKEND)
     else:
-        print("Configured backend (" + BACKEND + ") is not compatible with "+\
-        "current version.")
+        print(
+            "Configured backend (" + BACKEND + ") is not compatible with " +
+            "current version."
+        )
         exit(1)
 
     # Maximum Paste Size

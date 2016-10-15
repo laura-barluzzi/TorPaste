@@ -37,7 +37,10 @@ def new_paste():
         )
     else:
         if (request.form['content']):
-            status, message = logic.create_new_paste(request.form['content'], config)
+            status, message = logic.create_new_paste(
+                request.form['content'],
+                config
+            )
             if (status == "ERROR"):
                 return Response(
                     render_template(
@@ -192,7 +195,8 @@ def load_config():
     if BACKEND in COMPATIBLE_BACKENDS:
         b = importlib.import_module('backends.'+BACKEND)
     else:
-        print("Configured backend (" + BACKEND + ") is not compatible with current version.")
+        print("Configured backend (" + BACKEND + ") is not compatible with "+\
+        "current version.")
         exit(1)
 
     # Maximum Paste Size

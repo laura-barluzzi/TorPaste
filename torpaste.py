@@ -4,7 +4,6 @@
 import importlib
 import time
 from datetime import datetime
-from hashlib import sha256
 from os import getenv
 import sys
 import logic

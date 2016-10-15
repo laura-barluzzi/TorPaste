@@ -309,7 +309,7 @@ def load_config():
         print("An unknown error occured while determining max paste size.")
         exit(1)
 
-    ### Disable the paste listing feature
+    # Disable the paste listing feature
     PASTE_LIST_ACTIVE = getenv("TP_PASTE_LIST_ACTIVE") or True
     if PASTE_LIST_ACTIVE in ["False", "false", 0, "0"]:
         PASTE_LIST_ACTIVE = False

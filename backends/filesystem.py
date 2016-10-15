@@ -44,7 +44,11 @@ def new_paste(paste_id, paste_content):
     ppath = "pastes/" + a + "/" + b + "/" + paste_id
 
     try:
-        with codecs.open(ppath, encoding="utf-8", mode="w+") as fd:
+        with codecs.open(
+            ppath,
+            encoding="utf-8",
+            mode="w+"
+        ) as fd:
             fd.write(paste_content)
     except:
         raise e.ErrorException(

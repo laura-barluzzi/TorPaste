@@ -152,19 +152,6 @@ def about_tor_paste():
     )
 
 
-# Functions
-def format_size(size):
-    scales = ["bytes", "kB", "MB", "GB", "TB", "PB"]
-    count = 0
-    while 1 == 1:
-        if size > 1024.0:
-            size /= 1024.0
-            count += 1
-        else:
-            break
-    return str(round(size, 1)) + " " + scales[count]
-
-
 # Required Initialization Code
 
 # necessary for local modules import (backends, exceptions)

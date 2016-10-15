@@ -7,6 +7,7 @@ from datetime import datetime
 from hashlib import sha256
 from os import getenv
 import sys
+import logic
 
 from flask import *
 
@@ -35,57 +36,22 @@ def new_paste():
             page = "new"
         )
     else:
-        if request.form['content']:
-            try:
-                paste_id = str(sha256(request.form['content'].encode('utf-8')).hexdigest())
-            except:
-                return render_template(
-                    "index.html",
-                    config = config,
-                    version = VERSION,
-                    page = "new",
-                    error = "An issue occurred while handling the paste. Please try again later. If the problem persists,\
-                     try notifying a system administrator."
+        if (request.form['content']):
+            status, message = logic.create_new_paste(request.form['content'], config)
+            if (status == "ERROR"):
+                return Response(
+                    render_template(
+                        "index.html",
+                        config = config,
+                        version = VERSION,
+                        page = "new",
+                        error = message
+                    ),
+                    400
                 )
 
-            if len(request.form['content'].encode('utf-8')) > config['MAX_PASTE_SIZE']:
-                return render_template(
-                    "index.html",
-                    config = config,
-                    version = VERSION,
-                    page = "new",
-                    error = "The paste sent is too large. This TorPaste instance has a maximum allowed paste size of "
-                          + format_size(config['MAX_PASTE_SIZE']) + "."
-                )
-
-            try:
-                b.new_paste(paste_id, request.form['content'])
-            except b.e.ErrorException as errmsg:
-                return render_template(
-                    "index.html",
-                    config = config,
-                    version = VERSION,
-                    page = "new",
-                    error = errmsg
-                )
-
-            try:
-                b.update_paste_metadata(
-                    paste_id,
-                    {
-                        "date": str(int(time.time()))
-                    }
-                )
-            except b.e.ErrorException as errmsg:
-                return render_template(
-                    "index.html",
-                    config = config,
-                    version = VERSION,
-                    page = "new",
-                    error = errmsg
-                )
-
-            return redirect("/view/" + paste_id)
+            if (status == "OK"):
+                return redirect("/view/" + message)
         else:
             return Response(
                 render_template(

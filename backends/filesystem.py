@@ -44,13 +44,14 @@ def new_paste(paste_id, paste_content):
     ppath = "pastes/" + a + "/" + b + "/" + paste_id
 
     try:
-        with codecs.open(ppath, encoding = "utf-8", mode = "w+") as fd:
+        with codecs.open(ppath, encoding="utf-8", mode="w+") as fd:
             fd.write(paste_content)
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )
 
     return
 
@@ -85,23 +86,25 @@ def update_paste_metadata(paste_id, metadata):
                 os.remove("pastes/" + a + "/" + b + "/" + j)
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )
 
     try:
         for k, v in metadata.items():
             with codecs.open(
                 ppath + "." + k,
-                encoding = "utf-8",
-                mode = "w+"
+                encoding="utf-8",
+                mode="w+"
             ) as fd:
                 fd.write(v)
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )
 
     return
 
@@ -137,15 +140,16 @@ def get_paste_contents(paste_id):
     try:
         with codecs.open(
             "pastes/" + a + "/" + b + "/" + paste_id,
-            encoding = "utf-8",
-            mode = "r"
+            encoding="utf-8",
+            mode="r"
         ) as fd:
             return fd.read()
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )
 
 
 def get_paste_metadata(paste_id):
@@ -169,21 +173,23 @@ def get_paste_metadata(paste_id):
                 t = f.split(".")[1]
                 with codecs.open(
                     "pastes/" + a + "/" + b + "/" + f,
-                    encoding = "utf-8",
-                    mode = "r"
+                    encoding="utf-8",
+                    mode="r"
                 ) as fd:
                     ret[t] = fd.read()
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )
 
     if len(ret) == 0:
         raise e.WarningException(
-            "Failed to load Paste Metadata. Some features like the paste "+\
-            "date may not work. If the problem persists, try notifying a "+\
-            "system administrator.")
+            "Failed to load Paste Metadata. Some features like the paste " +
+            "date may not work. If the problem persists, try notifying a " +
+            "system administrator."
+        )
 
     return ret
 
@@ -237,6 +243,7 @@ def get_all_paste_ids():
 
     except:
         raise e.ErrorException(
-            "An issue occurred with the local filesystem. Please try again "+\
-            "later. If the problem persists, try notifying a system "+\
-            "administrator.")
+            "An issue occurred with the local filesystem. Please try again " +
+            "later. If the problem persists, try notifying a system " +
+            "administrator."
+        )

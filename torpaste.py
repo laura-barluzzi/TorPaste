@@ -104,23 +104,13 @@ def view_paste(pasteid):
 
 @app.route("/raw/<pasteid>")
 def raw_paste(pasteid):
-    if not pasteid.isalnum():
-        return "No such paste", 404
-    if len(pasteid) < 6:
-        return "No such paste", 404
-    if not b.does_paste_exist(pasteid):
-        return "No such paste", 404
-    try:
-        paste_content = b.get_paste_contents(pasteid)
-    except b.e.ErrorException as errmsg:
-        return Response(
-            errmsg,
-            500
-        )
-    return Response(
-        paste_content,
-        mimetype = "text/plain"
-    )
+    status, data, code = logic.view_existing_paste(pasteid, config)
+
+    if (status == "ERROR" and code >= 500):
+        return Response(data, code, mimetype="text/plain")
+    if (status == "ERROR"):
+        return Response("No such paste", code, mimetype="text/plain")
+    return Response(data[0], mimetype="text/plain")
 
 
 @app.route("/list")

@@ -251,6 +251,19 @@ def about_tor_paste():
     )
 
 
+@app.after_request
+def additional_headers(response):
+    response.headers["X-Frame-Options"] = "NONE"
+    response.headers["X-Xss-Protection"] = "1; mode=block"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Content-Security-Policy"] = "default-src 'none'; "
+    response.headers["Content-Security-Policy"] += "img-src 'self'; "
+    response.headers["Content-Security-Policy"] += "style-src 'self'; "
+    if (config['CSP_REPORT_URI']):
+        response.headers["Content-Security-Policy"] += "report-uri "
+        response.headers["Content-Security-Policy"] += config['CSP_REPORT_URI']
+    return response
+
 # Functions
 def format_size(size):
     scales = ["bytes", "kB", "MB", "GB", "TB", "PB"]
@@ -314,11 +327,15 @@ def load_config():
     if PASTE_LIST_ACTIVE in ["False", "false", 0, "0"]:
         PASTE_LIST_ACTIVE = False
 
+    # Content Security Policy Handling
+    CSP_REPORT_URI = getenv("TP_CSP_REPORT_URI") or False
+
     return {
         "MAX_PASTE_SIZE": MAX_PASTE_SIZE,
         "WEBSITE_TITLE": WEBSITE_TITLE,
         "PASTE_LIST_ACTIVE": PASTE_LIST_ACTIVE,
-        "b": b
+        "b": b,
+        "CSP_REPORT_URI": CSP_REPORT_URI
     }
 
 config = load_config()

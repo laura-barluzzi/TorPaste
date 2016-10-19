@@ -14,7 +14,7 @@ from flask import *
 app = Flask(__name__)
 
 # Calculate Software Version
-VERSION = check_output(["git", "describe"]).decode("utf-8")
+VERSION = check_output(["git", "describe"]).decode("utf-8").replace("\n", "")
 
 # Compatible Backends List
 COMPATIBLE_BACKENDS = ["filesystem"]

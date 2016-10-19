@@ -160,7 +160,7 @@ def about_tor_paste():
 
 @app.after_request
 def additional_headers(response):
-    response.headers["X-Frame-Options"] = "NONE"
+    response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Xss-Protection"] = "1; mode=block"
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Content-Security-Policy"] = "default-src 'none'; "

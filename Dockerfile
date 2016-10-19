@@ -9,6 +9,9 @@ RUN pip3 install --upgrade pip setuptools
 # Install a Production WSGI Web Server
 RUN pip3 install gunicorn
 
+# Install git
+RUN apk add git
+
 # Move everything inside the container
 RUN mkdir /torpaste
 COPY . /torpaste/.

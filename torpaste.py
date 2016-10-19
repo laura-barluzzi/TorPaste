@@ -7,12 +7,16 @@ from datetime import datetime
 from os import getenv
 import sys
 import logic
+from subprocess import check_output
 
 from flask import *
 
 app = Flask(__name__)
 
-VERSION = "0.6"
+# Calculate Software Version
+VERSION = check_output(["git", "describe"]).decode("utf-8")
+
+# Compatible Backends List
 COMPATIBLE_BACKENDS = ["filesystem"]
 
 

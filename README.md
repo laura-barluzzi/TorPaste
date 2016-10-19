@@ -1,6 +1,8 @@
 # TorPaste
 A Pastebin for Tor
 
+![TravisCI](https://api.travis-ci.org/DaKnOb/TorPaste.svg?branch=master)
+
 ## What is this?
 
 TorPaste is a simple Pastebin service written in Python using the Flask framework.

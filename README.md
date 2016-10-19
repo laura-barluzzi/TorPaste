@@ -2,6 +2,14 @@
 A Pastebin for Tor
 
 ![TravisCI](https://api.travis-ci.org/DaKnOb/TorPaste.svg?branch=master)
+![Current Version](https://img.shields.io/github/tag/daknob/torpaste.svg)
+![Open Issues](https://img.shields.io/github/issues-raw/daknob/torpaste.svg)
+![Closed Issues](https://img.shields.io/github/issues-closed-raw/daknob/torpaste.svg)
+![License](https://img.shields.io/github/license/daknob/torpaste.svg)
+![Awesome People](https://img.shields.io/github/contributors/daknob/torpaste.svg)
+![Pull Requests](https://img.shields.io/github/issues-pr-raw/daknob/torpaste.svg)
+![Closed Pull Requests](https://img.shields.io/github/issues-pr-closed-raw/daknob/torpaste.svg)
+![Docker Pulls](https://img.shields.io/docker/pulls/daknob/torpaste.svg)
 
 ## What is this?
 

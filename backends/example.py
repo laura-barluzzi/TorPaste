@@ -146,7 +146,8 @@ def get_paste_metadata_value(paste_id, key):
     passed are typically ASCII.
     :param paste_id: ASCII string which represents the ID of the paste
     :param key: key of the metadata
-    :return: value of the metadata key provided for the given ID, None if the key wasn't set
+    :return: value of the metadata key provided for the given ID, None if
+             the key wasn't set
     """
 
     if get_paste_metadata(paste_id)[key]:

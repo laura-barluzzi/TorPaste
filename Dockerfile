@@ -22,6 +22,9 @@ WORKDIR /torpaste
 # Install the required software
 RUN pip3 install -r requirements.txt
 
+# Pull more data from git
+RUN git pull --depth=100
+
 # Expose port *80*
 EXPOSE 80
 

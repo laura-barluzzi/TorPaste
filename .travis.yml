@@ -5,4 +5,4 @@ python:
     - "3.6-dev"
     - "nightly"
 install: pip install pep8
-script: pep8 torpaste.py
+script: pep8 .

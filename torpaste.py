@@ -167,6 +167,7 @@ def additional_headers(response):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-Xss-Protection"] = "1; mode=block"
     response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Powered-By"] = "Tor Paste " + VERSION
     response.headers["Content-Security-Policy"] = "default-src 'none'; "
     response.headers["Content-Security-Policy"] += "img-src 'self'; "
     response.headers["Content-Security-Policy"] += "style-src 'self'; "

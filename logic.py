@@ -24,17 +24,22 @@ def format_size(size):
     return str(round(size, 1)) + " " + scales[count]
 
 
-def create_new_paste(content, config):
+def create_new_paste(content, visibility, config):
     """
     This method is responsible for creating new pastes by directly
     talking to the currently used backend. It is also responsible
     for ensuring the current input is valid, such as for example that
     it is under the Maximum Allowed Paste Size.
     :param content: The content of the paste to create
+    :param visibility: The visibility of the paste to create
     :param config: The TorPaste configuration object
     :return: The result of the action (ERROR/OK), some data (error message/
              Paste ID) as well as the suggested HTTP Status Code to return.
     """
+    if visibility not in config['ENABLED_PASTE_VISIBILITIES']:
+        return "ERROR","The requested paste visibility is not " +\
+            "currently supported."
+
     try:
         paste_id = str(sha256(content.encode('utf-8')).hexdigest())
     except:
@@ -56,7 +61,8 @@ def create_new_paste(content, config):
         config['b'].update_paste_metadata(
             paste_id,
             {
-                "date": str(int(time.time()))
+                "date": str(int(time.time())),
+                "visibility": visibility
             }
         )
     except config['b'].e.ErrorException as errmsg:
@@ -116,10 +122,19 @@ def get_paste_listing(config):
         return "ERROR", "Paste listing has been disabled by the " +\
             "administrator.", 503
 
+    b = config['b']
+
     try:
-        paste_list = config['b'].get_all_paste_ids()
-    except config['b'].e.ErrorException as errmsg:
+        paste_list = b.get_all_paste_ids()
+    except b.e.ErrorException as errmsg:
         return "ERROR", errmsg, 500
+
+    if (paste_list[0] != "none"):
+        # filter pastes to keep the public ones only
+        paste_list = [ paste for paste in paste_list 
+                    if b.get_paste_metadata_value(paste, 'visibility') == 'public']
+
+        paste_list = paste_list or ["none"]
 
     if (paste_list[0] == "none"):
         return "OK", "none", 200

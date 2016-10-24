@@ -24,21 +24,26 @@ def format_size(size):
     return str(round(size, 1)) + " " + scales[count]
 
 
-def create_new_paste(content, visibility, config):
+def create_new_paste(content, metadata, config):
     """
     This method is responsible for creating new pastes by directly
     talking to the currently used backend. It is also responsible
     for ensuring the current input is valid, such as for example that
     it is under the Maximum Allowed Paste Size.
     :param content: The content of the paste to create
-    :param visibility: The visibility of the paste to create
+    :param metadata: Metadata for the new paste
     :param config: The TorPaste configuration object
     :return: The result of the action (ERROR/OK), some data (error message/
              Paste ID) as well as the suggested HTTP Status Code to return.
     """
-    if visibility not in config['ENABLED_PASTE_VISIBILITIES']:
-        return "ERROR","The requested paste visibility is not " +\
-            "currently supported."
+
+    try:
+        visibility = metadata['visibility']
+        if visibility not in config['ENABLED_PASTE_VISIBILITIES']:
+            return "ERROR", "The requested paste visibility is not " +\
+                "currently supported."
+    except KeyError:
+        visibility = config['ENABLED_PASTE_VISIBILITIES'][0]
 
     try:
         paste_id = str(sha256(content.encode('utf-8')).hexdigest())
@@ -110,11 +115,12 @@ def view_existing_paste(paste_id, config):
     return "OK", (paste_content, paste_date), 200
 
 
-def get_paste_listing(config):
+def get_paste_listing(config, filters={}):
     """
     This method is responsible for returning a list of all currently saved
     pastes, or a list with only one element ("none") if there are no pastes.
     :param config: The TorPaste configuration object
+    :param filters: a dictionary of filters to apply on the listing
     :return: A list with all Paste IDs of all stored pastes. If no stored
              pastes exist, a list with only one element, "none".
     """
@@ -125,16 +131,9 @@ def get_paste_listing(config):
     b = config['b']
 
     try:
-        paste_list = b.get_all_paste_ids()
+        paste_list = b.get_all_paste_ids(filters)
     except b.e.ErrorException as errmsg:
         return "ERROR", errmsg, 500
-
-    if (paste_list[0] != "none"):
-        # filter pastes to keep the public ones only
-        paste_list = [ paste for paste in paste_list 
-                    if b.get_paste_metadata_value(paste, 'visibility') == 'public']
-
-        paste_list = paste_list or ["none"]
 
     if (paste_list[0] == "none"):
         return "OK", "none", 200

@@ -217,17 +217,18 @@ def get_paste_metadata_value(paste_id, key):
         return None
 
 
-def get_all_paste_ids():
+def get_all_paste_ids(filters={}):
     """
-    This method must return a Python list containing each and every
-    Paste ID, in ASCII. The order does not matter so it can be the same
-    or it can be different every time this function is called. In the
-    case of no pastes, the method must return a Python list with a
-    single item, whose content must be equal to 'none'.
+    This method must return a Python list containing the ASCII ID of all
+    pastes which match the (optional) filters provided.The order does not
+    matter so it can be the same or it can be different every time this
+    function is called. In the case of no pastes, the method must return a
+    Python list with a single item, whose content must be equal to 'none'.
+    :param filters: a dictionnary of filters
     :return: a list containing all paste IDs
     """
 
-    ret = []
+    allPastes = []
 
     try:
         for i in os.listdir("pastes"):
@@ -239,15 +240,30 @@ def get_all_paste_ids():
                 for k in os.listdir("pastes/" + i + "/" + j):
                     if "." in k:
                         continue
-                    ret.append(k)
-        if len(ret) == 0:
-            return ['none']
-
-        return ret
-
+                    allPastes.append(k)
     except:
         raise e.ErrorException(
             "An issue occurred with the local filesystem. Please try again " +
             "later. If the problem persists, try notifying a system " +
             "administrator."
         )
+
+    filtered = []
+    for p in allPastes:
+        keep = True
+
+        try:
+            for k, v in filters.items():
+                if get_paste_metadata_value(p, k) != v:
+                    keep = False
+                    break
+        except (e.ErrorException, e.WarningException):
+            keep = False
+
+        if keep:
+            filtered.append(p)
+
+    if len(filtered) == 0:
+        filtered = ['none']
+
+    return filtered

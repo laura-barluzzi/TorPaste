@@ -23,12 +23,14 @@
 					</div>
 					<div class="form-group">
 						<div class="col-xs-10 col-xs-offset-1">
+							{% if config['ENABLED_PASTE_VISIBILITIES']|length > 1 %}
 							<label for="visibility">Paste visibility: </label>
 							<select name="visibility" class="form-control">
 								{% for visibility in config['ENABLED_PASTE_VISIBILITIES'] %}
-								<option value="{{visibility}}">{{visibility.capitalize()}}</option>
+								<option class="form-control" value="{{visibility}}">{{visibility.capitalize()}}</option>
 								{% endfor %}
 							</select>
+							{% endif %}
 						</div>
 					</div>
 					<div class="form-group">

@@ -24,6 +24,7 @@ COMPATIBLE_BACKENDS = ["filesystem"]
 # unlisted: can be viewed by all, is not listed in /list ("hidden")
 AVAILABLE_VISIBILITIES = ["public", "unlisted"]
 
+
 @app.route('/')
 def index():
     return render_template(
@@ -47,7 +48,7 @@ def new_paste():
         if (request.form['content']):
             status, message = logic.create_new_paste(
                 request.form['content'],
-                request.form['visibility'],
+                request.form,
                 config
             )
             if (status == "ERROR"):
@@ -132,7 +133,8 @@ def raw_paste(pasteid):
 
 @app.route("/list")
 def list():
-    status, data, code = logic.get_paste_listing(config)
+    listFilters = {"visibility": "public"}
+    status, data, code = logic.get_paste_listing(config, listFilters)
 
     if (status == "ERROR"):
         return Response(
@@ -189,9 +191,9 @@ sys.path.append('.')
 def load_config():
     """
     This method reads all configuration variables from environment variables
-    and put them in a dictionary, which is then returned.
-    Environment variables are used for convenience when using Docker (simply add
-    an -e "TP_SOME_CONFIG_VAR=value" to docker run to modify the default 
+    and put them in a dictionary, which is then returned. Environment
+    variables are used for convenience when using Docker (simply add
+    an -e "TP_SOME_CONFIG_VAR=value" to docker run to modify the default
     configuration)
 
     :return: the configuration dictionary
@@ -254,9 +256,9 @@ def load_config():
     ENABLED_PASTE_VISIBILITIES = ENABLED_PASTE_VISIBILITIES.replace(' ', '')
     ENABLED_PASTE_VISIBILITIES = ENABLED_PASTE_VISIBILITIES.split(',')
     # remove any potential whitespace
-    ENABLED_PASTE_VISIBILITIES = [visibility for visibility 
-        in ENABLED_PASTE_VISIBILITIES if visibility in AVAILABLE_VISIBILITIES]
-
+    ENABLED_PASTE_VISIBILITIES = [visibility
+                                  for visibility in ENABLED_PASTE_VISIBILITIES
+                                  if visibility in AVAILABLE_VISIBILITIES]
 
     if len(ENABLED_PASTE_VISIBILITIES) == 0:
         print("No valid visibilities found for pastes.")
@@ -267,8 +269,8 @@ def load_config():
         "WEBSITE_TITLE": WEBSITE_TITLE,
         "PASTE_LIST_ACTIVE": PASTE_LIST_ACTIVE,
         "CSP_REPORT_URI": CSP_REPORT_URI,
-        "b": b,
         "ENABLED_PASTE_VISIBILITIES": ENABLED_PASTE_VISIBILITIES,
+        "b": b
     }
 
 config = load_config()

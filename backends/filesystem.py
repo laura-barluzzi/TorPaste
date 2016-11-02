@@ -224,7 +224,7 @@ def get_all_paste_ids(filters={}):
     matter so it can be the same or it can be different every time this
     function is called. In the case of no pastes, the method must return a
     Python list with a single item, whose content must be equal to 'none'.
-    :param filters: a dictionnary of filters
+    :param filters: a dictionary of filters
     :return: a list containing all paste IDs
     """
 

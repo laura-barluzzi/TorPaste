@@ -10,9 +10,9 @@ Gunicorn with 8 workers.
 Error Handling:
 In order to handle any errors and to keep TorPaste sane, we  are  using
 generic exceptions and we leave the control flow up to the backend dev-
-eloper. That means that when writting this file, you must make some, if
+eloper. That means that when writing this file, you must make some, if
 not all the decisions on what the TorPaste  user  will  experience. So,
-if you face an error that can be overcomed by  any  means,  you  should
+if you face an error that can be overcome by  any  means,  you  should
 raise the ErrorException and pass some text that will be visible to the
 user. If this exception is raised, it means that the desired action has
 failed and the user should be returned back to the original screen.  If
@@ -163,7 +163,7 @@ def get_all_paste_ids(filters={}):
     matter so it can be the same or it can be different every time this
     function is called. In the case of no pastes, the method must return a
     Python list with a single item, whose content must be equal to 'none'.
-    :param filters: a dictionnary of filters
+    :param filters: a dictionary of filters
     :return: a list containing all paste IDs
     """
 

@@ -14,7 +14,7 @@ A Pastebin for Tor
 ## What is this?
 
 TorPaste is a simple Pastebin service written in Python using the Flask framework.
-It is targetted to users inside Tor and can be easily setup as a Hidden Service.
+It is targeted to users inside Tor and can be easily setup as a Hidden Service.
 As of version v0.4 TorPaste supports multiple backends for storage of data, however
 currently only the local filesystem backend is implemented. TorPaste has been designed
 in order to need no cookies or JavaScript and to run without problems in the Tor Browser

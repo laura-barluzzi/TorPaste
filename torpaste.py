@@ -19,6 +19,11 @@ VERSION = check_output(["git", "describe"]).decode("utf-8").replace("\n", "")
 # Compatible Backends List
 COMPATIBLE_BACKENDS = ["filesystem"]
 
+# Available list of paste visibilities
+# public: can be viewed by all, is listed in /list
+# unlisted: can be viewed by all, is not listed in /list ("hidden")
+AVAILABLE_VISIBILITIES = ["public", "unlisted"]
+
 
 @app.route('/')
 def index():
@@ -43,6 +48,7 @@ def new_paste():
         if (request.form['content']):
             status, message = logic.create_new_paste(
                 request.form['content'],
+                request.form,
                 config
             )
             if (status == "ERROR"):
@@ -127,7 +133,8 @@ def raw_paste(pasteid):
 
 @app.route("/list")
 def list():
-    status, data, code = logic.get_paste_listing(config)
+    listFilters = {"visibility": "public"}
+    status, data, code = logic.get_paste_listing(config, listFilters)
 
     if (status == "ERROR"):
         return Response(
@@ -182,8 +189,17 @@ def additional_headers(response):
 sys.path.append('.')
 
 
-# Handle Environment Variables (for configuration)
 def load_config():
+    """
+    This method reads all configuration variables from environment variables
+    and put them in a dictionary, which is then returned. Environment
+    variables are used for convenience when using Docker (simply add
+    an -e "TP_SOME_CONFIG_VAR=value" to docker run to modify the default
+    configuration)
+
+    :return: the configuration dictionary
+    """
+
     # Web App <title>
     WEBSITE_TITLE = getenv("TP_WEBSITE_TITLE") or "Tor Paste"
 
@@ -233,12 +249,29 @@ def load_config():
     # Content Security Policy Handling
     CSP_REPORT_URI = getenv("TP_CSP_REPORT_URI") or False
 
+    # control the enabled paste visibilities:
+    # public = can be opened by anyone and listed in /list
+    # unlisted = can be opened by anyone, but are not listed in /list
+    visibilityEnv = "TP_ENABLED_PASTE_VISIBILITIES"
+    ENABLED_PASTE_VISIBILITIES = getenv(visibilityEnv) or 'public'
+    ENABLED_PASTE_VISIBILITIES = ENABLED_PASTE_VISIBILITIES.replace(' ', '')
+    ENABLED_PASTE_VISIBILITIES = ENABLED_PASTE_VISIBILITIES.split(',')
+    # remove any potential whitespace
+    ENABLED_PASTE_VISIBILITIES = [visibility
+                                  for visibility in ENABLED_PASTE_VISIBILITIES
+                                  if visibility in AVAILABLE_VISIBILITIES]
+
+    if len(ENABLED_PASTE_VISIBILITIES) == 0:
+        print("No valid visibilities found for pastes.")
+        exit(1)
+
     return {
         "MAX_PASTE_SIZE": MAX_PASTE_SIZE,
         "WEBSITE_TITLE": WEBSITE_TITLE,
         "PASTE_LIST_ACTIVE": PASTE_LIST_ACTIVE,
-        "b": b,
-        "CSP_REPORT_URI": CSP_REPORT_URI
+        "CSP_REPORT_URI": CSP_REPORT_URI,
+        "ENABLED_PASTE_VISIBILITIES": ENABLED_PASTE_VISIBILITIES,
+        "b": b
     }
 
 config = load_config()

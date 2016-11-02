@@ -125,6 +125,10 @@ available in the `Pastes` menu. *Default:* `True`
 * `TP_CSP_REPORT_URI` : Use this variable to set a `report-uri` for the Content Security
 Policy of TorPaste. If this variable is not set, no `report-uri` is added, which is the
 default behavior.
+* `TP_ENABLED_PASTE_VISIBILITIES` : Use this variable to select the available paste
+visibilities, separated by a comma. Example: "public,unlisted". The available backends
+for each version are included in the `AVAILABLE_VISIBILITIES` variable inside 
+`torpaste.py`. *Default:* `public`.
 
 ### Backend ENV Variables
 Each backend may need one or more additional `ENV` variables to work. For example,

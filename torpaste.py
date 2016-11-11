@@ -134,7 +134,12 @@ def raw_paste(pasteid):
 @app.route("/list")
 def list():
     listFilters = {"visibility": "public"}
-    status, data, code = logic.get_paste_listing(config, listFilters)
+    defaultFilters = {"visibility": "public"}
+    status, data, code = logic.get_paste_listing(
+        config,
+        listFilters,
+        defaultFilters
+    )
 
     if (status == "ERROR"):
         return Response(

@@ -115,7 +115,7 @@ def view_existing_paste(paste_id, config):
     return "OK", (paste_content, paste_date), 200
 
 
-def get_paste_listing(config, filters={}):
+def get_paste_listing(config, filters={}, fdefaults={}):
     """
     This method is responsible for returning a list of all currently saved
     pastes, or a list with only one element ("none") if there are no pastes.
@@ -131,7 +131,7 @@ def get_paste_listing(config, filters={}):
     b = config['b']
 
     try:
-        paste_list = b.get_all_paste_ids(filters)
+        paste_list = b.get_all_paste_ids(filters, fdefaults)
     except b.e.ErrorException as errmsg:
         return "ERROR", errmsg, 500
 

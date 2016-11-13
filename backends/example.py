@@ -52,7 +52,7 @@ future,  please  think  very carefully before designing your persistent
 storage, be it database tables, folders and files, or anything else.
 """
 
-import exceptions as e
+import backends.exceptions as e
 
 
 def initialize_backend():

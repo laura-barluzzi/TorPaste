@@ -13,16 +13,16 @@ def initialize_backend():
     """
     global rb
 
-    RedisHost   =   getenv("TP_BACKEND_REDIS_HOST") or "127.0.0.1"
-    RedisPort   =   int(getenv("TP_BACKEND_REDIS_PORT") or "6379")
-    RedisPass   =   getenv("TP_BACKEND_REDIS_PASSWORD") or None
-    RedisDBI    =   int(getenv("TP_BACKEND_REDIS_DB_INDEX") or "1")
+    RedisHost = getenv("TP_BACKEND_REDIS_HOST") or "127.0.0.1"
+    RedisPort = int(getenv("TP_BACKEND_REDIS_PORT") or "6379")
+    RedisPass = getenv("TP_BACKEND_REDIS_PASSWORD") or None
+    RedisDBI = int(getenv("TP_BACKEND_REDIS_DB_INDEX") or "1")
 
     rb = redis.StrictRedis(
-        host = RedisHost,
-        port = RedisPort,
-        password = RedisPass,
-        db = RedisDBI
+        host=RedisHost,
+        port=RedisPort,
+        password=RedisPass,
+        db=RedisDBI
     )
 
     if rb.ping() is not True:
@@ -130,7 +130,6 @@ def get_paste_metadata_value(paste_id, key):
              the key wasn't set
     """
 
-
     if rb.exists(paste_id + "." + key) is not True:
         return None
     else:
@@ -158,7 +157,7 @@ def get_all_paste_ids(filters={}, fdefaults={}):
     filt = []
     for p in ap:
         keep = True
-        
+
         for k, v in filters.items():
             gpmv = get_paste_metadata_value(p, k)
             if gpmv is None:

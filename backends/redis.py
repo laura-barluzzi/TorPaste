@@ -31,6 +31,9 @@ def initialize_backend():
             "later. If the error persists, please contact a system" +
             "administrator."
         )
+
+    rb.save()
+
     return
 
 
@@ -48,6 +51,9 @@ def new_paste(paste_id, paste_content):
     """
 
     rb.set(paste_id, paste_content)
+
+    rb.save()
+
     return
 
 
@@ -69,6 +75,8 @@ def update_paste_metadata(paste_id, metadata):
         rb.delete(md)
     for md in metadata:
         rb.set(paste_id + "." + md, metadata[md])
+
+    rb.save()
 
     return
 

@@ -28,7 +28,9 @@ def _wrap_azure_exception(func):
         try:
             return func(*args, **kwargs)
         except AzureException as ex:
-            raise ErrorException(ex)
+            raise ErrorException(
+                'Error while communicating with the Azure Storage Service'
+            ) from ex
 
     return _adapt_exception_types
 

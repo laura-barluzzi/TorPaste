@@ -40,13 +40,13 @@ Try to keep it clear and concise.
 We use [PEP8](https://www.python.org/dev/peps/pep-0008/) as coding style
 convention. There's probably no need to read the whole thing, though: just
 make sure your code looks like what's already there. You can install a command
-line utility called `pep8` using:
+line utility called `flake8` using:
 
 ```bash
-sudo pip install pep8
+sudo pip install flake8
 ```
 
-Afterwards, by running `pep8 file.py` you will see all the changes you must
+Afterwards, by running `flake8 file.py` you will see all the changes you must
 make in order to be fully compliant.
 
 One method you can follow is write your code, but before you commit it, open
@@ -54,10 +54,10 @@ two windows, side by side, one having your editor, and the other being a
 terminal. Afterwards, run in the terminal:
 
 ```bash
-watch -n1 pep8 file.py
+watch -n1 flake8 file.py
 ```
 
-This will show you the output of the `pep8` command and it will automatically
+This will show you the output of the `flake8` command and it will automatically
 update every one second, so as soon as you save your file, you will see the
 changes being reflected in the command output. If you run macOS and don't have
 `watch` installed, you can install it by using `brew install watch`.

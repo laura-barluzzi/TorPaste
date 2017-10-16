@@ -14,7 +14,7 @@ def initialize_backend():
     """
 
     try:
-        os.mkdirs("pastes")
+        os.makedirs("pastes", exist_ok=True)
     except:
         pass
     return

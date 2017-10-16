@@ -188,6 +188,7 @@ def additional_headers(response):
         response.headers["Content-Security-Policy"] += config['CSP_REPORT_URI']
     return response
 
+
 # Required Initialization Code
 
 # necessary for local modules import (backends, exceptions)
@@ -279,6 +280,7 @@ def load_config():
         "b": b
     }
 
+
 config = load_config()
 b = config['b']
 
@@ -288,6 +290,7 @@ try:
 except:
     print("Failed to initialize backend")
     exit(1)
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0")

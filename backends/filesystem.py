@@ -13,11 +13,7 @@ def initialize_backend():
     such as connecting to a remote database or making sure a file exists.
     """
 
-    try:
-        os.mkdirs("pastes")
-    except:
-        pass
-    return
+    os.makedirs("pastes", exist_ok=True)
 
 
 def new_paste(paste_id, paste_content):
@@ -36,10 +32,7 @@ def new_paste(paste_id, paste_content):
     a = paste_id[0:2]
     b = paste_id[2:4]
 
-    try:
-        os.makedirs("pastes/" + a + "/" + b)
-    except:
-        pass
+    os.makedirs("pastes/" + a + "/" + b, exist_ok=True)
 
     ppath = "pastes/" + a + "/" + b + "/" + paste_id
 
@@ -77,10 +70,7 @@ def update_paste_metadata(paste_id, metadata):
     a = paste_id[0:2]
     b = paste_id[2:4]
 
-    try:
-        os.makedirs("pastes/" + a + "/" + b)
-    except:
-        pass
+    os.makedirs("pastes/" + a + "/" + b, exist_ok=True)
 
     ppath = "pastes/" + a + "/" + b + "/" + paste_id
 

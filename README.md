@@ -103,6 +103,12 @@ this is an improved implementation so we can maintain backwards compatibility wi
 running any migration scripts. It is also the simplest backend and it is used by
 default.
 
+### azure_storage
+This is a backend based on the [Azure Storage Service](https://azure.microsoft.com/en-us/services/storage/blobs/).
+The backend is activated by setting `TP_BACKEND=azure_storage`. Each paste is
+stored as a separate blob which means that this backend supports paste sizes [up to 5TB](https://docs.microsoft.com/en-us/azure/storage/common/storage-scalability-targets).
+Metadata associated with a paste is stored directly on the blob via [custom metadata fields](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-properties-metadata).
+
 ## Configuration
 TorPaste can be configured by using `ENV`ironment Variables. The list of available
 variables as well as their actions is below so you can use them to parameterize your
@@ -137,5 +143,18 @@ to the database. To prevent conflicts, all these variables will be available as
 `TP_BACKEND_BACKENDNAME_VARIABLE` where `BACKENDNAME` is the name of the backend,
 such as `MYSQL` and the `VARIABLE` will be the name of the variable, such as `HOST`.
 
-Currently there are no used backend `ENV` variables. When there are, you will find
-a list of all backends and their variables here.
+#### azure_storage
+
+This backend assumes that you have an Azure subscription and a storage account
+in that subscription. You can learn how to set up a new subscription [here](https://azure.microsoft.com/en-us/free/)
+and how to set up a storage account [here](https://docs.microsoft.com/en-us/azure/storage/common/storage-create-storage-account).
+
+* `TP_BACKEND_AZURE_STORAGE_ACCOUNT_NAME` : Use this variable to set the name of
+  the Azure storage account to use.
+* `TP_BACKEND_AZURE_STORAGE_ACCOUNT_KEY` : Use this variable to set the key of
+  the Azure storage account to use.
+* `TP_BACKEND_AZURE_STORAGE_CONTAINER` : Use this variable to set the name of
+  the container in which to store pastes and metadata. If the container does not
+  exist, it will be created. *Default:* `torpaste`.
+* `TP_BACKEND_AZURE_STORAGE_TIMEOUT_SECONDS` : Use this variable to set the
+  timeout in seconds for all requests to Azure. *Default:* `10`.

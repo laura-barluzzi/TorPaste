@@ -1,1 +1,2 @@
 Flask
+azure-storage==0.36.0

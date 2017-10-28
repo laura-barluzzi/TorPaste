@@ -1,11 +1,10 @@
-from functools import wraps
-from os import environ
 from os import getenv
 
 import boto3
 from botocore.exceptions import ClientError
 
-from backends.exceptions import ErrorException
+from backends.utils import getenv_required
+from backends.utils import wrap_exception
 
 _ENV_ACCESS_KEY_ID = 'TP_BACKEND_AWS_S3_ACCESS_KEY_ID'
 _ENV_SECRET_ACCESS_KEY = 'TP_BACKEND_AWS_S3_SECRET_ACCESS_KEY'
@@ -16,25 +15,9 @@ _DEFAULT_BUCKET = 'torpaste'
 _s3 = None
 _bucket = None
 
-
-def _wrap_aws_exception(func):
-    @wraps(func)
-    def _adapt_exception_types(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except ClientError as ex:
-            raise ErrorException(
-                'Error while communicating with AWS S3') from ex
-
-    return _adapt_exception_types
-
-
-def _getenv_required(key):
-    try:
-        return environ[key]
-    except KeyError:
-        raise ErrorException(
-            'Required environment variable %s not set' % key)
+_wrap_aws_exception = wrap_exception(
+    ClientError,
+    'Error while communicating with AWS S3')
 
 
 @_wrap_aws_exception
@@ -44,8 +27,8 @@ def initialize_backend():
 
     _s3 = boto3.resource(
         's3',
-        aws_access_key_id=_getenv_required(_ENV_ACCESS_KEY_ID),
-        aws_secret_access_key=_getenv_required(_ENV_SECRET_ACCESS_KEY))
+        aws_access_key_id=getenv_required(_ENV_ACCESS_KEY_ID),
+        aws_secret_access_key=getenv_required(_ENV_SECRET_ACCESS_KEY))
 
     _bucket = getenv(_ENV_BUCKET, _DEFAULT_BUCKET)
     _s3.create_bucket(Bucket=_bucket)

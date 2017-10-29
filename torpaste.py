@@ -25,6 +25,7 @@ COMPATIBLE_BACKENDS = [
     "filesystem",
     "azure_storage",
     "aws_s3",
+    "sqlite",
 ]
 
 # Available list of paste visibilities

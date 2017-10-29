@@ -116,6 +116,11 @@ has data, a key, and metadata. The key (paste_id) uniquely identifies the object
 (paste) in a bucket. Object metadata is a set of name-value pairs that cannot be
 modified but can be replaced by a metadata copy.
 
+### sqlite
+This is a backend based on the SQLite database. All pastes and metadata
+are stored in a single-file database. The backend is activated by setting
+`TP_BACKEND=sqlite`.
+
 ## Configuration
 TorPaste can be configured by using `ENV`ironment Variables. The list of available
 variables as well as their actions is below so you can use them to parameterize your
@@ -179,3 +184,10 @@ set up a storage account [here](http://docs.aws.amazon.com/AmazonS3/latest/gsg/S
 * `TP_BACKEND_AWS_S3_BUCKET` : Use this variable to set the name of the container
   in which to store pastes and metadata. If the container does not exist, it will
   be created. Default: torpaste.
+
+#### sqlite
+
+This backend assumes a writable file-system.
+
+* `TP_BACKEND_SQLITE_DATABASE_PATH` : Use this variable to set the path where
+   the sqlite database file will be stored.

@@ -1,4 +1,5 @@
 import sqlite3
+from functools import wraps
 from itertools import groupby
 from operator import itemgetter
 from os import environ
@@ -18,6 +19,20 @@ def _getenv_required(key):
             'Required environment variable %s not set' % key)
 
 
+def _wrap_sqlite_exception(func):
+    @wraps(func)
+    def _adapt_exception_types(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except sqlite3.Error as ex:
+            raise ErrorException(
+                'Error while communicating with the SQLite database'
+            ) from ex
+
+    return _adapt_exception_types
+
+
+@_wrap_sqlite_exception
 def initialize_backend():
     global _db
 
@@ -39,6 +54,7 @@ def initialize_backend():
         ''')
 
 
+@_wrap_sqlite_exception
 def new_paste(paste_id, paste_content):
     with _db:
         _db.execute('''
@@ -46,6 +62,7 @@ def new_paste(paste_id, paste_content):
         ''', [paste_id, paste_content])
 
 
+@_wrap_sqlite_exception
 def update_paste_metadata(paste_id, metadata):
     with _db:
         _db.execute('''
@@ -56,12 +73,14 @@ def update_paste_metadata(paste_id, metadata):
         ''', [(paste_id, key, value) for (key, value) in metadata.items()])
 
 
+@_wrap_sqlite_exception
 def does_paste_exist(paste_id):
     return _db.execute('''
         SELECT 1 FROM pastes WHERE id = ?
     ''', [paste_id]).fetchone() is not None
 
 
+@_wrap_sqlite_exception
 def get_paste_contents(paste_id):
     row = _db.execute('''
         SELECT content FROM pastes WHERE id = ?
@@ -69,6 +88,7 @@ def get_paste_contents(paste_id):
     return row[0] if row else None
 
 
+@_wrap_sqlite_exception
 def get_paste_metadata(paste_id):
     rows = _db.execute('''
         SELECT key, value FROM pastes_metadata WHERE id = ?
@@ -76,6 +96,7 @@ def get_paste_metadata(paste_id):
     return {key: value for (key, value) in rows}
 
 
+@_wrap_sqlite_exception
 def get_paste_metadata_value(paste_id, key):
     row = _db.execute('''
         SELECT value FROM pastes_metadata WHERE id = ? AND key = ?
@@ -109,5 +130,6 @@ def _get_all_paste_ids(filters, fdefaults):
             yield paste_id
 
 
+@_wrap_sqlite_exception
 def get_all_paste_ids(filters={}, fdefaults={}):
     return list(_get_all_paste_ids(filters, fdefaults))

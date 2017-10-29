@@ -9,7 +9,31 @@ from backends.exceptions import ErrorException
 
 _ENV_DATABASE_PATH = 'TP_BACKEND_SQLITE_DATABASE_PATH'
 
-_connection = None  # type: sqlite3.Connection
+
+class _Db(object):
+    _connection = None
+
+    @classmethod
+    @contextmanager
+    def _get_cursor(cls, commit):
+        cursor = cls._connection.cursor()
+
+        yield cursor
+
+        if commit:
+            cls._connection.commit()
+
+    @classmethod
+    def read_cursor(cls):
+        return cls._get_cursor(commit=False)
+
+    @classmethod
+    def write_cursor(cls):
+        return cls._get_cursor(commit=True)
+
+    @classmethod
+    def connect(cls, connection):
+        cls._connection = connection
 
 
 def _getenv_required(key):
@@ -33,31 +57,11 @@ def _wrap_sqlite_exception(func):
     return _adapt_exception_types
 
 
-@contextmanager
-def _get_cursor(connection, commit):
-    cursor = connection.cursor()
-
-    yield cursor
-
-    if commit:
-        connection.commit()
-
-
-def _read_cursor():
-    return _get_cursor(_connection, commit=False)
-
-
-def _write_cursor():
-    return _get_cursor(_connection, commit=True)
-
-
 @_wrap_sqlite_exception
 def initialize_backend():
-    global _connection
+    _Db.connect(sqlite3.connect(_getenv_required(_ENV_DATABASE_PATH)))
 
-    _connection = sqlite3.connect(_getenv_required(_ENV_DATABASE_PATH))
-
-    with _write_cursor() as cursor:
+    with _Db.write_cursor() as cursor:
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS pastes (
               id TEXT,
@@ -75,7 +79,7 @@ def initialize_backend():
 
 @_wrap_sqlite_exception
 def new_paste(paste_id, paste_content):
-    with _write_cursor() as cursor:
+    with _Db.write_cursor() as cursor:
         cursor.execute('''
             INSERT INTO pastes (id, content) VALUES (?, ?)
         ''', [paste_id, paste_content])
@@ -83,7 +87,7 @@ def new_paste(paste_id, paste_content):
 
 @_wrap_sqlite_exception
 def update_paste_metadata(paste_id, metadata):
-    with _write_cursor() as cursor:
+    with _Db.write_cursor() as cursor:
         cursor.execute('''
             DELETE FROM pastes_metadata WHERE id = ?
         ''', [paste_id])
@@ -94,7 +98,7 @@ def update_paste_metadata(paste_id, metadata):
 
 @_wrap_sqlite_exception
 def does_paste_exist(paste_id):
-    with _read_cursor() as cursor:
+    with _Db.read_cursor() as cursor:
         row = cursor.execute('''
             SELECT 1 FROM pastes WHERE id = ?
         ''', [paste_id]).fetchone()
@@ -103,7 +107,7 @@ def does_paste_exist(paste_id):
 
 @_wrap_sqlite_exception
 def get_paste_contents(paste_id):
-    with _read_cursor() as cursor:
+    with _Db.read_cursor() as cursor:
         row = cursor.execute('''
             SELECT content FROM pastes WHERE id = ?
         ''', [paste_id]).fetchone()
@@ -112,7 +116,7 @@ def get_paste_contents(paste_id):
 
 @_wrap_sqlite_exception
 def get_paste_metadata(paste_id):
-    with _read_cursor() as cursor:
+    with _Db.read_cursor() as cursor:
         rows = cursor.execute('''
             SELECT key, value FROM pastes_metadata WHERE id = ?
         ''', [paste_id]).fetchall()
@@ -121,7 +125,7 @@ def get_paste_metadata(paste_id):
 
 @_wrap_sqlite_exception
 def get_paste_metadata_value(paste_id, key):
-    with _read_cursor() as cursor:
+    with _Db.read_cursor() as cursor:
         row = cursor.execute('''
             SELECT value FROM pastes_metadata WHERE id = ? AND key = ?
         ''', [paste_id, key]).fetchone()
@@ -142,7 +146,7 @@ def _filters_match(metadata, filters, fdefaults):
 
 
 def _get_all_paste_ids(filters, fdefaults):
-    with _read_cursor() as cursor:
+    with _Db.read_cursor() as cursor:
         rows = cursor.execute('''
             SELECT id, key, value FROM pastes_metadata
             UNION

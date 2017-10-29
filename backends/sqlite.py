@@ -1,4 +1,5 @@
 import sqlite3
+from contextlib import contextmanager
 from functools import wraps
 from itertools import groupby
 from operator import itemgetter
@@ -8,7 +9,7 @@ from backends.exceptions import ErrorException
 
 _ENV_DATABASE_PATH = 'TP_BACKEND_SQLITE_DATABASE_PATH'
 
-_db = None  # type: sqlite3.Connection
+_connection = None  # type: sqlite3.Connection
 
 
 def _getenv_required(key):
@@ -32,20 +33,38 @@ def _wrap_sqlite_exception(func):
     return _adapt_exception_types
 
 
+@contextmanager
+def _get_cursor(connection, commit):
+    cursor = connection.cursor()
+
+    yield cursor
+
+    if commit:
+        connection.commit()
+
+
+def _read_cursor():
+    return _get_cursor(_connection, commit=False)
+
+
+def _write_cursor():
+    return _get_cursor(_connection, commit=True)
+
+
 @_wrap_sqlite_exception
 def initialize_backend():
-    global _db
+    global _connection
 
-    _db = sqlite3.connect(_getenv_required(_ENV_DATABASE_PATH))
+    _connection = sqlite3.connect(_getenv_required(_ENV_DATABASE_PATH))
 
-    with _db:
-        _db.execute('''
+    with _write_cursor() as cursor:
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS pastes (
               id TEXT,
               content TEXT,
               PRIMARY KEY (id))
         ''')
-        _db.execute('''
+        cursor.execute('''
             CREATE TABLE IF NOT EXISTS pastes_metadata (
               id TEXT,
               key TEXT,
@@ -56,51 +75,56 @@ def initialize_backend():
 
 @_wrap_sqlite_exception
 def new_paste(paste_id, paste_content):
-    with _db:
-        _db.execute('''
+    with _write_cursor() as cursor:
+        cursor.execute('''
             INSERT INTO pastes (id, content) VALUES (?, ?)
         ''', [paste_id, paste_content])
 
 
 @_wrap_sqlite_exception
 def update_paste_metadata(paste_id, metadata):
-    with _db:
-        _db.execute('''
+    with _write_cursor() as cursor:
+        cursor.execute('''
             DELETE FROM pastes_metadata WHERE id = ?
         ''', [paste_id])
-        _db.executemany('''
+        cursor.executemany('''
             INSERT INTO pastes_metadata VALUES (?, ?, ?)
         ''', [(paste_id, key, value) for (key, value) in metadata.items()])
 
 
 @_wrap_sqlite_exception
 def does_paste_exist(paste_id):
-    return _db.execute('''
-        SELECT 1 FROM pastes WHERE id = ?
-    ''', [paste_id]).fetchone() is not None
+    with _read_cursor() as cursor:
+        row = cursor.execute('''
+            SELECT 1 FROM pastes WHERE id = ?
+        ''', [paste_id]).fetchone()
+    return row is not None
 
 
 @_wrap_sqlite_exception
 def get_paste_contents(paste_id):
-    row = _db.execute('''
-        SELECT content FROM pastes WHERE id = ?
-    ''', [paste_id]).fetchone()
+    with _read_cursor() as cursor:
+        row = cursor.execute('''
+            SELECT content FROM pastes WHERE id = ?
+        ''', [paste_id]).fetchone()
     return row[0] if row else None
 
 
 @_wrap_sqlite_exception
 def get_paste_metadata(paste_id):
-    rows = _db.execute('''
-        SELECT key, value FROM pastes_metadata WHERE id = ?
-    ''', [paste_id]).fetchall()
+    with _read_cursor() as cursor:
+        rows = cursor.execute('''
+            SELECT key, value FROM pastes_metadata WHERE id = ?
+        ''', [paste_id]).fetchall()
     return {key: value for (key, value) in rows}
 
 
 @_wrap_sqlite_exception
 def get_paste_metadata_value(paste_id, key):
-    row = _db.execute('''
-        SELECT value FROM pastes_metadata WHERE id = ? AND key = ?
-    ''', [paste_id, key]).fetchone()
+    with _read_cursor() as cursor:
+        row = cursor.execute('''
+            SELECT value FROM pastes_metadata WHERE id = ? AND key = ?
+        ''', [paste_id, key]).fetchone()
     return row[0] if row else None
 
 
@@ -118,11 +142,12 @@ def _filters_match(metadata, filters, fdefaults):
 
 
 def _get_all_paste_ids(filters, fdefaults):
-    rows = _db.execute('''
-        SELECT id, key, value FROM pastes_metadata
-        UNION
-        SELECT id, "", "" FROM pastes
-    ''').fetchall()
+    with _read_cursor() as cursor:
+        rows = cursor.execute('''
+            SELECT id, key, value FROM pastes_metadata
+            UNION
+            SELECT id, "", "" FROM pastes
+        ''').fetchall()
 
     for paste_id, rows in groupby(rows, itemgetter(0)):
         metadata = {key: value for (_, key, value) in rows}
@@ -132,4 +157,4 @@ def _get_all_paste_ids(filters, fdefaults):
 
 @_wrap_sqlite_exception
 def get_all_paste_ids(filters={}, fdefaults={}):
-    return list(_get_all_paste_ids(filters, fdefaults))
+    return list(_get_all_paste_ids(filters, fdefaults)) or ['none']

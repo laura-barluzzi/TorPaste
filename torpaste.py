@@ -26,6 +26,7 @@ COMPATIBLE_BACKENDS = [
     "azure_storage",
     "aws_s3",
     "sqlite",
+    "postgres",
 ]
 
 # Available list of paste visibilities

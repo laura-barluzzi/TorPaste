@@ -121,6 +121,11 @@ This is a backend based on the SQLite database. All pastes and metadata
 are stored in a single-file database. The backend is activated by setting
 `TP_BACKEND=sqlite`.
 
+### postgres
+This is a backend based on the Postgres database. The backend assumes that you
+have a running Postgres database set up that the application can connect to via
+a connection string. The backend is activated by setting `TP_BACKEND=postgres`.
+
 ## Configuration
 TorPaste can be configured by using `ENV`ironment Variables. The list of available
 variables as well as their actions is below so you can use them to parameterize your
@@ -191,3 +196,8 @@ This backend assumes a writable file-system.
 
 * `TP_BACKEND_SQLITE_DATABASE_PATH` : Use this variable to set the path where
    the sqlite database file will be stored.
+
+#### postgres
+
+* `TP_BACKEND_POSTGRES_DATABASE_CONNECTION` : Use this variable to set the
+  connection string with which to connect to the Postgres database.

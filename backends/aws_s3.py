@@ -3,6 +3,7 @@ from os import getenv
 import boto3
 from botocore.exceptions import ClientError
 
+from backends.utils import filters_match
 from backends.utils import getenv_required
 from backends.utils import wrap_exception
 
@@ -82,24 +83,11 @@ def get_paste_metadata_value(paste_id, key):
     return get_paste_metadata(paste_id).get(key)
 
 
-def _filters_match(metadata, filters, fdefaults):
-    for metadata_key, filter_value in filters.items():
-        try:
-            metadata_value = metadata[metadata_key]
-        except KeyError:
-            metadata_value = fdefaults.get(metadata_key)
-
-        if metadata_value != filter_value:
-            return False
-
-    return True
-
-
 def _get_all_paste_ids(filters, fdefaults):
     for obj in _s3.Bucket(_bucket).objects.all():
         paste_id = obj.key
         metadata = get_paste_metadata(paste_id)
-        if _filters_match(metadata, filters, fdefaults):
+        if filters_match(metadata, filters, fdefaults):
             yield paste_id
 
 

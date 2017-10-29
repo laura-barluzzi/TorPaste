@@ -4,6 +4,7 @@ from azure.common import AzureException
 from azure.storage.blob import BlockBlobService
 from azure.storage.blob import Include
 
+from backends.utils import filters_match
 from backends.utils import getenv_int
 from backends.utils import getenv_required
 from backends.utils import wrap_exception
@@ -82,25 +83,12 @@ def get_paste_metadata_value(paste_id, key):
     return metadata.get(key)
 
 
-def _filters_match(metadata, filters, fdefaults):
-    for metadata_key, filter_value in filters.items():
-        try:
-            metadata_value = metadata[metadata_key]
-        except KeyError:
-            metadata_value = fdefaults.get(metadata_key)
-
-        if metadata_value != filter_value:
-            return False
-
-    return True
-
-
 def _get_all_paste_ids(filters, fdefaults):
     blobs = _blob_service.list_blobs(
         _container, include=Include.METADATA, timeout=_timeout)
 
     for blob in blobs:
-        if _filters_match(blob.metadata, filters, fdefaults):
+        if filters_match(blob.metadata, filters, fdefaults):
             yield blob.name
 
 

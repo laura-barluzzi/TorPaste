@@ -36,3 +36,16 @@ def getenv_int(key, default):
         raise ErrorException(
             'Environment variable %s with value %s '
             'is not convertible to int' % (key, value))
+
+
+def filters_match(metadata, filters, fdefaults):
+    for metadata_key, filter_value in filters.items():
+        try:
+            metadata_value = metadata[metadata_key]
+        except KeyError:
+            metadata_value = fdefaults.get(metadata_key)
+
+        if metadata_value != filter_value:
+            return False
+
+    return True

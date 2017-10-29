@@ -105,4 +105,4 @@ def _get_all_paste_ids(filters, fdefaults):
 
 @_wrap_aws_exception
 def get_all_paste_ids(filters={}, fdefaults={}):
-    return list(_get_all_paste_ids(filters, fdefaults))
+    return list(_get_all_paste_ids(filters, fdefaults)) or ['none']
